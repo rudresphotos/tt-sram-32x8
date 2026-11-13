@@ -171,4 +171,5 @@ A cell needs roughly >0.4-0.5 V on its wordline before it is disturbed.
 * When swapping in your own cells, re-run `./corners.sh debug --glitch` and `./corners.sh march`.
   The DFF in particular changes the address-path timing behind the race in 3.4.
 * The OpenRAM `.lib` timing file is empty (characterization was bypassed in `compiler/sram.py`).
+* Note: re-running OpenRAM gives a DRC/LVS-clean macro, but not byte-identical to the committed one (internal subcircuit names/order change). The committed `macro/` is the version verified at all corners; anything regenerated must be re-verified.
 * Not yet done for Tiny Tapeout: the `tt_um_*` wrapper, met4 power hookup, tile placement and the TT flow.

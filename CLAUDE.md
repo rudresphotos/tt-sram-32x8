@@ -39,6 +39,8 @@ debugging anything: it records two traps that already cost a day each.
    (KLayout DRC + antenna, which may flag what Magic didn't).
 
 ## Repo hygiene
-* Don't edit `macro/` by hand. It is OpenRAM output; regenerate it with `openram/generate.sh`.
+* Don't edit `macro/` by hand. It is OpenRAM output; regenerate it with `openram/generate.sh` (tested: DRC 0, LVS match).
+  A regeneration is not byte-identical (subckt names/order change), so re-verify all corners before trusting it.
+* OpenRAM must run with `~/OpenRAM/.venv/bin/python3` inside `nixrun` (numpy etc. are there, not in the Nix venv).
 * Don't put files inside `~/OpenRAM`; everything we add belongs in this repo.
 * New run outputs go to `sim/runs/` (git-ignored). Copy only final evidence logs into `sim/results_*/`.

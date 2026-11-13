@@ -14,7 +14,7 @@ step() { echo; echo "=== $* ==="; }
 
 step "1/6 apt packages"
 sudo apt-get update -qq
-sudo apt-get install -y -qq git curl xz-utils make python3
+sudo apt-get install -y -qq git curl xz-utils make python3 python3-venv
 
 step "2/6 Nix package manager (provides magic, netgen, ngspice, klayout at OpenRAM-tested versions)"
 if [ ! -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
@@ -24,7 +24,7 @@ mkdir -p ~/.config/nix
 grep -qs flakes ~/.config/nix/nix.conf || echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 . "$HOME/.nix-profile/etc/profile.d/nix.sh"
 
-step "3/6 OpenRAM at $OPENRAM_COMMIT"
+step "3/6 OpenRAM at $OPENRAM_COMMIT + its Python venv"
 [ -d ~/OpenRAM/.git ] || git clone https://github.com/VLSIDA/OpenRAM ~/OpenRAM
 cd ~/OpenRAM
 if [ "$(git rev-parse HEAD)" != "$OPENRAM_COMMIT" ]; then git fetch -q origin && git checkout -q "$OPENRAM_COMMIT"; fi
@@ -34,6 +34,12 @@ else
   git apply "$REPO/openram/sram_py_skip_characterization.patch" && echo "patch applied (compiler/sram.py)"
 fi
 cp "$REPO/openram/$CONFIG" macros/sram_configs/
+# OpenRAM's Python deps live in ~/OpenRAM/.venv (system python3.12). The Nix shell's own venv (compiler/.venv) is empty.
+if ! ~/OpenRAM/.venv/bin/python3 -c "import numpy, scipy, openram" 2>/dev/null; then
+  python3 -m venv ~/OpenRAM/.venv
+  ~/OpenRAM/.venv/bin/pip install -q -r "$REPO/openram/requirements-venv.txt"
+  ~/OpenRAM/.venv/bin/pip install -q -e ~/OpenRAM
+fi
 
 step "4/6 environment variables in ~/.bashrc"
 if ! grep -qs "OPENRAM_HOME" ~/.bashrc; then

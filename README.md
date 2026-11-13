@@ -45,6 +45,7 @@ openram/
   sky130_sram_1rw_8x16.py               the OpenRAM config (16x8, 1 rw port, sky130 custom cell)
   sram_py_skip_characterization.patch   OpenRAM patch: delay stimulus, .lib characterization and datasheet only warn instead of aborting (they failed for this config; that's why the .lib is empty)
   generate.sh                           regenerate the macro with OpenRAM and copy it into macro/
+  requirements-venv.txt                 pinned Python packages for ~/OpenRAM/.venv (setup.sh installs them)
 macro/                    OpenRAM output, the baseline design (GDS, LEF, .v, .sp, log with DRC/LVS)
 pex/
   extract.sh, run_pex.sh  GDS -> netlist with parasitic capacitance (Magic)
@@ -72,6 +73,7 @@ cd ~/sram_work/sim
 python3 sramtb.py --help
 ```
 After changing the design: `openram/generate.sh`, then `pex/extract.sh`, then `sim/prep_netlist.sh`, then `sim/corners.sh debug --glitch` and `sim/corners.sh march`.
+Note: re-running OpenRAM gives a DRC/LVS-clean macro, but not byte-identical to the committed one (internal subcircuit names/order change). The committed `macro/` is the version verified at all corners; anything regenerated must be re-verified.
 
 ## Rules learned the hard way
 
