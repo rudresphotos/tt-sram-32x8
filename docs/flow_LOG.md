@@ -174,6 +174,31 @@ Why: D1 must start from the OpenRAM config, so I need the exact steps between Op
 - Failure: `FileNotFoundError: ... /home/runner/OpenRAM/macros/macro/tt_sram_8x32_wpr1/`: OpenRAM makes only the last
   directory level; on a fresh checkout `macros/macro/` does not exist. Fix: `mkdir -p` first.
 
+### 16. CI run 4 (`043634f`, run 43936974433): the whole D1 chain passes from the OpenRAM config
+- `macro` job (19:13-19:17 UTC): OpenRAM log `DRC Errors tt_sram_8x32_wpr1 0`, `tt_sram_8x32_wpr1 LVS matches`,
+  `SIZE 147.895 BY 180.99` (= try9 macro); fix_implants printed exactly the numbers of entry 13
+  (`nsdm: added 99 ...`, `psdm: added 32 ...`, `npc: added 119 ...`); `met4 OBS rects: 33 -> 23`; `MACRO OK`.
+- `tile` job: with that macro, LibreLane -> GL test -> tt_submission -> local precheck (`flow/precheck.sh`):
+  `INFO: Precheck passed ... 🎉`, all 15 rows ✅, then `ALL STEPS OK (run tag ci)`.
+- The job then failed in my STA plumbing test (below), so `compare` and TT's precheck action were skipped in this run.
+
+### 17. D2 first attempts: OpenRAM's characterizer and this macro
+- Characterization run 1 (`887d417`, run 43936876637, `sram_char.py`): all 3 corners failed after ~90 s with
+  `Trying feasible period: 10.0ns ... 1280.0ns` then `Timed out, could not find a feasible period.`, i.e. every
+  simulation was judged a failed read, independent of the period.
+- OpenRAM's analytical .lib written by the macro build is **0 bytes**. The macro log (CI and Rudr's try9 log) says
+  `ERROR: file simulation.py: line 613: Could not find bl net in timing paths.` twice, followed by
+  `Skipping delay stimulus:` and `Skipping lib characterization:`. So the generator's characterizer has never
+  worked for this config; the skip-characterization change only hides that error. So "revert the patch" alone
+  cannot give a .lib.
+- Cause found for the stand-alone characterizer: it builds the bit-probe names from patterns and hard-codes the
+  storage nets `Q` / `Q_bar`; the sky130 bitcell in the macro netlist (`.subckt sky130_custom_cell`) calls them
+  `Q` / `Qbar`. Characterizer-only patch `flow/openram/openram_memchar_storage_names.diff` reads the names from the
+  config (`memchar_storage_names = ("Q", "Qbar")`). No circuit file is touched.
+- Rudr's OpenRAM diff is now two files (`openram_nwell5a.diff`, `openram_skip_characterization.diff`); applied
+  together they give the same OpenRAM tree as the original diff (`git diff | shasum` identical:
+  `dbd40866b424d5c1529e10abdac0675e45d3fe53`).
+
 ## Open items
 - Contributor: revoke and re-create the GitHub CLI token. It was printed once in Claude's tool output on
   2026-11-16 during a credential check (GitHub -> Settings -> Applications -> Authorized OAuth Apps ->
