@@ -43,3 +43,10 @@ For specifications and instructions, see the [analog specs page](https://tinytap
   then `tools/fix_implants.py` (implant gap fill for the KLayout FEOL rules); macro LVS re-checked after the fix.
 - `build/config.yaml`: LibreLane 3.0.14 run that places the SRAM in the 1x2 tile and routes it to the TT pins.
 - `build/pdn/pdn_cfg.tcl`: power grid = two full-height met4 stripes (VGND, VPWR) that drop via3 onto the SRAM power ring.
+
+## Credits
+
+- SRAM generated with [OpenRAM](https://github.com/VLSIDA/OpenRAM) (BSD-3-Clause), SKY130 cells from the
+  SkyWater PDK and `sky130_fd_bd_sram` (Apache-2.0).
+- OpenRAM baseline flow and verification scripts: the team's OpenRAM baseline repository.
+- Tile integration, power grid and layout fixes for Tiny Tapeout: Rudr Bisht.
