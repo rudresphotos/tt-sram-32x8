@@ -37,7 +37,8 @@ if [ ! -d "$OR/.git" ]; then
 fi
 if [ "$(git -C "$OR" rev-parse HEAD 2>/dev/null || true)" != "$OPENRAM_COMMIT" ]; then
   git -C "$OR" fetch -q --depth 1 origin "$OPENRAM_COMMIT" || fail "fetch OpenRAM $OPENRAM_COMMIT"
-  git -C "$OR" checkout -q "$OPENRAM_COMMIT"
+  # -f: a restored CI cache of the PDK/cell-library folders contains files that are also tracked by git
+  git -C "$OR" checkout -q -f "$OPENRAM_COMMIT"
 fi
 # Rudr's local OpenRAM diff, split in two: the nwell.5a fix (always) and skip-characterization (only for the
 # macro build, as in try9; flow/characterize.sh takes it out again).
