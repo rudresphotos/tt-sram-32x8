@@ -93,6 +93,51 @@ Network note: `raw.githubusercontent.com` is blocked on this network (curl error
   `{` is read as a YAML mapping). Fixed with a `|` block, checked with `yaml.safe_load`, pushed as `952253d`.
 - Run of `952253d`: https://github.com/AaryanSharmaCodes/tt-sram-32x8/actions/runs/43921286981 (result below).
 
+### 11. CI run 1 (`952253d`, run 43921286981): LibreLane OK, my GL-test call failed
+- Job `tile` 17:43:07 -> 17:47:33 UTC. LibreLane itself ran all 80 stages in 1 min 24 s (log 17:46:05 -> 17:47:29)
+  and ended `Flow complete.` with its manufacturability report: `Antenna Passed`, `LVS Passed`, `DRC Passed`.
+- PDK check: `PDK_ROOT = /home/runner/.ciel/ciel/sky130/versions/8afc8346a57fe1ab7934ba5a6056ea8b43078e71` (= try9).
+- Failure: `test/run_gl.sh: Permission denied` -> `BUILD FAILED at step: gate-level sim did not run`.
+  Cause: `git ls-files -s test/run_gl.sh` shows mode `100644` (not executable). Fix in `flow/build_tile.sh`: call it
+  with `bash`. Rudr's file is unchanged.
+- Noted, not yet judged: Magic prints `Warning: cell "..._contact_25" placed on top of itself. Ignoring the extra one.`
+  while reading the macro GDS at GDS stream-out. Need to check whether try9 had the same (the pack has no try9 flow log).
+- Pushed `1d81265`; run 2: https://github.com/AaryanSharmaCodes/tt-sram-32x8/actions/runs/43922337307
+
+### 12. CI run 2 (`1d81265`, run 43922337307): try9 REPRODUCED
+All three jobs `success`. Job times (UTC): `tile` 17:49:11-17:53:30, `compare` 17:53:32-17:53:55,
+`precheck` 17:53:32-17:55:54. LibreLane itself: 17:51:56 -> 17:53:20 (1 min 24 s).
+
+| Check | Result (copied from the job logs / artifacts) |
+|---|---|
+| PDK used | `.../sky130/versions/8afc8346a57fe1ab7934ba5a6056ea8b43078e71` (= try9) |
+| LibreLane manufacturability | `Antenna Passed`, `LVS Passed`, `DRC Passed`, `Flow complete.` |
+| Sign-off counts | magic DRC 0, illegal overlap 0, LVS errors 0, route DRC 0, antenna nets 0 / pins 0, power grid 0, max slew/fanout/cap 0, flow errors 0 |
+| All try9 metrics | `298/298 metrics identical` |
+| GDS geometry | `39 layers compared: XOR empty, labels equal` (KLayout 0.30.13, vs committed `gds/`) |
+| LEF | `identical` to committed `lef/` |
+| Gate-level TT-pin test | `gate-level TT-pin test: 64 reads checked, 0 errors -> PASS` (Icarus Verilog 12.0 from Ubuntu apt) |
+| TT precheck (tt-support-tools `9d13ff3`, log `HEAD is now at 9d13ff3`) | `Precheck passed ... 🎉`; `results.md` table has all 15 checks ✅ and is identical (`diff`) to try9's table |
+
+**Is the GDS byte-identical?** No, and that is expected (D1 asks for XOR-equal, not byte-equal).
+Both files are 1077488 bytes; SHA-256 rebuilt `95d22693...cdf6` vs committed `bac4dd08...3346`. A record-by-record
+walk of both GDS streams (88107 records each) shows the only differing records are:
+- 1 `BGNLIB` + 117 `BGNSTR` records = creation/modification dates written into the file, and
+- 4362 `SNAME` + 110 `STRNAME` records = cell names. All 110 renamed cells differ only in a 3-character prefix
+  (`ML_` in the rebuild vs `SC_` in the committed file, e.g. `ML_tt_sram_8x32_wpr1_pinv_9` vs
+  `SC_tt_sram_8x32_wpr1_pinv_9`); the rest of every name is equal.
+- 0 differing records of any other type (no geometry, layer, label or placement record differs).
+The prefix is added to the macro's sub-cell names during Magic's GDS stream-out; it changes between runs.
+TT's "Cell name check" passes with it.
+
+The Magic messages `cell "..._contact_25" placed on top of itself. Ignoring the extra one.` appear 369 times in
+the run-2 tile log. Since the XOR is empty and the metrics match, they do not change the result; they come from
+reading OpenRAM's macro GDS.
+
+**Conclusion:** the try9 tile build is reproduced from the committed inputs with one command
+(`flow/build_tile.sh`, run by the `reproduce tile` workflow). This is the tile half of D1. Still to do for D1:
+put OpenRAM macro generation + `fix_implants.py` in front of it, and add a `make tile` entry point.
+
 ## Open items
 - Contributor: revoke and re-create the GitHub CLI token. It was printed once in Claude's tool output on
   2026-11-16 during a credential check (GitHub -> Settings -> Applications -> Authorized OAuth Apps ->
