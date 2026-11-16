@@ -90,7 +90,8 @@ jobs:
           python flow/compare_try9.py build/runs/ci | tee compare_try9.txt
       - name: Add comparison to the run summary
         if: always()
-        run: { echo '```'; cat compare_try9.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+        run: |
+          { echo '```'; cat compare_try9.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
 
   precheck:
     needs: tile
