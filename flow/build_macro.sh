@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Regenerate the SRAM macro the tile uses, from the OpenRAM config, and install it into build/macro/:
-#   OpenRAM v1.2.50 (pinned commit + flow/openram/openram_local_changes.diff)  -> raw GDS/LEF/V/SP
+#   OpenRAM v1.2.50 (pinned commit + Rudr's two local changes, flow/openram/*.diff)  -> raw GDS/LEF/V/SP
 #   build/tools/fix_implants.py      (implant gap fill for the KLayout FEOL rules)  -> GDS used in the tile
 #   build/tools/open_obs_columns.py  (frees the two met4 power-stripe columns in the LEF OBS, see pdn/pdn_cfg.tcl)
 # Stops with a clear message at the first step that fails. Linux x86_64 only (OpenRAM's Nix flake).
@@ -39,13 +39,16 @@ if [ "$(git -C "$OR" rev-parse HEAD 2>/dev/null || true)" != "$OPENRAM_COMMIT" ]
   git -C "$OR" fetch -q --depth 1 origin "$OPENRAM_COMMIT" || fail "fetch OpenRAM $OPENRAM_COMMIT"
   git -C "$OR" checkout -q "$OPENRAM_COMMIT"
 fi
-PATCH="$ROOT/flow/openram/openram_local_changes.diff"
-if git -C "$OR" apply --reverse --check "$PATCH" 2>/dev/null; then
-  echo "patch already applied"
-else
-  git -C "$OR" apply "$PATCH" || fail "apply $PATCH"
-  echo "patch applied: $(git -C "$OR" diff --stat | tail -1)"
-fi
+# Rudr's local OpenRAM diff, split in two: the nwell.5a fix (always) and skip-characterization (only for the
+# macro build, as in try9; flow/characterize.sh takes it out again).
+for PATCH in "$ROOT/flow/openram/openram_nwell5a.diff" "$ROOT/flow/openram/openram_skip_characterization.diff"; do
+  if git -C "$OR" apply --reverse --check "$PATCH" 2>/dev/null; then
+    echo "already applied: $(basename "$PATCH")"
+  else
+    git -C "$OR" apply "$PATCH" || fail "apply $PATCH"
+    echo "applied: $(basename "$PATCH")"
+  fi
+done
 
 step "2/7 Python venvs (OpenRAM: pinned requirements; flow tools: klayout)"
 if ! "$OR/.venv/bin/python3" -c "import numpy, scipy, openram" 2>/dev/null; then

@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 # D2: Liberty (.lib) model of the SRAM macro from ngspice simulation (not OpenRAM's analytical estimate), one
-# PVT corner per call, with OpenRAM's own characterizer (sram_char.py: it calls the characterizer directly, so
-# the skip-characterization change in compiler/sram.py is not on this path).
+# PVT corner per call, with OpenRAM's stand-alone characterizer sram_char.py on the macro's netlist.
+# Why sram_char.py and not the generator: in OpenRAM's generator flow (compiler/sram.py) characterization stops
+# with "Could not find bl net in timing paths." for this sky130 config (also in Rudr's try9 macro log, which is
+# why the skip-characterization change exists). sram_char.py calls the same delay/setup-hold characterizer
+# but names the probe nets from patterns instead of that timing-graph search.
+# One characterizer-only patch (flow/openram/openram_memchar_storage_names.diff): the bitcell storage nets are
+# read from the config (sky130_custom_cell calls them Q / Qbar; OpenRAM hard-codes Q / Q_bar). No circuit change.
 #
 # usage: flow/characterize.sh CORNER [SPICE_NETLIST]
 #   CORNER         TT (1.80 V 25 C) | SS (1.60 V 100 C) | FF (1.95 V -40 C)   = LibreLane's three corners
@@ -19,9 +24,12 @@ step() { echo; echo "=== [$(date -u +%H:%M:%S)] $* ==="; }
 fail() { echo; echo "CHARACTERIZATION FAILED at step: $*" >&2; exit 1; }
 [ -s "$SP" ] || fail "netlist $SP not found (run flow/build_macro.sh first)"
 
-step "1/4 OpenRAM environment"
+step "1/4 OpenRAM environment + characterizer patch"
 SETUP_ONLY=1 "$ROOT/flow/build_macro.sh" >/dev/null || fail "OpenRAM setup (run SETUP_ONLY=1 flow/build_macro.sh to see why)"
 export OPENRAM_HOME="$OR/compiler" OPENRAM_TECH="$OR/technology" PDK_ROOT="$OR" CHAR_CORNER="$CORNER"
+CPATCH="$ROOT/flow/openram/openram_memchar_storage_names.diff"
+git -C "$OR" apply --reverse --check "$CPATCH" 2>/dev/null || git -C "$OR" apply "$CPATCH" || fail "apply $CPATCH"
+git -C "$OR" diff --stat
 
 step "2/4 ngspice characterization, corner $CORNER, netlist $SP"
 cp "$ROOT/flow/openram/sky130_sram_common.py" "$ROOT/flow/openram/$NAME.py" "$ROOT/flow/openram/char_$NAME.py" "$OR/macros/sram_configs/"
@@ -29,7 +37,7 @@ rm -rf "$OR/macros/char/$CORNER"
 mkdir -p "$OR/macros/char"
 start=$(date +%s)
 (cd "$OR" && nix --extra-experimental-features 'nix-command flakes' develop --quiet --command \
-   bash -c "cd macros && '$OR/.venv/bin/python3' -u ../sram_char.py -v sram_configs/char_$NAME.py '$SP'") \
+   bash -c "cd macros && '$OR/.venv/bin/python3' -u ../sram_char.py -v -v sram_configs/char_$NAME.py '$SP'") \
    || fail "sram_char.py (see output above)"
 echo "characterization took $(( $(date +%s) - start )) s"
 

@@ -138,6 +138,42 @@ reading OpenRAM's macro GDS.
 (`flow/build_tile.sh`, run by the `reproduce tile` workflow). This is the tile half of D1. Still to do for D1:
 put OpenRAM macro generation + `fix_implants.py` in front of it, and add a `make tile` entry point.
 
+### 13. Macro half of D1: how the tile's macro was made from OpenRAM's output (local checks on the Mac)
+Why: D1 must start from the OpenRAM config, so I need the exact steps between OpenRAM's raw output and `build/macro/`.
+- `build/macro/tt_sram_8x32_wpr1.{v,py,log}` and `.orig.lef` are byte-identical to the pack's raw OpenRAM output
+  (`openram/macro_tt_sram_8x32_wpr1/`); `.orig.lef` = OpenRAM's LEF.
+- GDS: `build/tools/fix_implants.py` on the raw GDS (sha256 `b9d8231f...45bc`). Run locally with the klayout Python
+  package through `flow/klayout_run.py` (does what `klayout -zz -r SCRIPT -rd k=v` does). Its own report:
+  `nsdm: added 99 fill polygons, 120.9610 um^2`, `psdm: added 32 fill polygons, 4.2348 um^2`,
+  `npc: added 119 fill polygons, 10.5672 um^2`, two manual psdm bridges.
+  `flow/gds_xor.py` result vs committed `build/macro/tt_sram_8x32_wpr1.gds`:
+  `top cell tt_sram_8x32_wpr1: 29 layers compared: XOR empty, labels equal`.
+  Negative test (raw, unfixed GDS vs committed): differences on exactly 93/44 nsdm (99 polygons), 94/20 psdm (33),
+  95/20 npc (119) -> the check does catch real changes.
+- LEF: the committed LEF = OpenRAM's LEF with two met4 OBS columns opened by `build/tools/open_obs_columns.py`.
+  The column x-ranges are not written down anywhere; I read them from the diff and from `pdn/pdn_cfg.tcl`
+  (stripes at macro-local 15.14..16.74 and 21.51..23.11, each widened by the 0.3 um met4 spacing):
+  `cols="14.84,17.04;21.21,23.41"`. Output: `met4 OBS rects: 33 -> 23` and `diff` = identical to the committed LEF.
+
+### 14. One command: `make tile` / `flow/build.sh`
+- `flow/build_macro.sh`: OpenRAM at `2f7b3866` (shallow fetch) + `flow/openram/openram_local_changes.diff`, Python venv
+  from the team's pinned `requirements-venv.txt`, OpenRAM's own `make sky130-pdk` / `make sky130-install`, then
+  `sram_compiler.py` on `flow/openram/tt_sram_8x32_wpr1.py`; fails unless OpenRAM's log says `DRC Errors ... 0` and
+  `LVS matches`; then fix_implants + LEF columns; installs into `build/macro/`.
+- `flow/build.sh` = build_macro -> build_tile (LibreLane, GL test, tt_submission/) -> `flow/precheck.sh` (local TT
+  precheck, same steps and pins as TT's precheck action) -> optional `CHECK_TRY9=1` comparison.
+  `Makefile`: `make tile`, `make macro`, `make check`.
+- `flow/compare_try9.py` gained check 0 (macro GDS XOR + LEF/V bytes vs the committed `build/macro/`, read from git HEAD).
+- Fixed my own bug in `build_tile.sh`: a comment had swallowed `|| fail ...` after the GL-test call.
+
+### 15. CI run 3 (`d8d4801`, run 43935832866): macro job failed in 1.5 min
+- Steps 1-3 OK (OpenRAM checkout + patch, venv, PDK + cell library in ~1 min). Tool versions printed by the job:
+  `magic /nix/store/1zcyq032zc3mzhmgs2j3q2rmfrjj5v6b-magic-vlsi-8.3.629`,
+  `netgen /nix/store/h3crgmx1w7h86qjpr131igi7p576mp3x-netgen-1.5.318`, `ngspice ...-ngspice-45`. The magic and
+  netgen store paths are the same hashes as in Rudr's OpenRAM log of the try9 macro -> same tool builds.
+- Failure: `FileNotFoundError: ... /home/runner/OpenRAM/macros/macro/tt_sram_8x32_wpr1/`: OpenRAM makes only the last
+  directory level; on a fresh checkout `macros/macro/` does not exist. Fix: `mkdir -p` first.
+
 ## Open items
 - Contributor: revoke and re-create the GitHub CLI token. It was printed once in Claude's tool output on
   2026-11-16 during a credential check (GitHub -> Settings -> Applications -> Authorized OAuth Apps ->

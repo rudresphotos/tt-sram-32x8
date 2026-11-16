@@ -94,7 +94,11 @@ def table_values(g):
 
 def check(path):
     print(f"\n### {path}")
-    lib = parse(tokenize(open(path).read())).groups[0]
+    root = parse(tokenize(open(path).read()))
+    if not root.groups or root.groups[0].kind != "library":
+        print("  BAD no library group (empty or not a Liberty file)")
+        return False
+    lib = root.groups[0]
     ok = True
     for u in ("time_unit", "capacitive_load_unit", "voltage_unit", "current_unit", "leakage_power_unit"):
         v = lib.attrs.get(u)

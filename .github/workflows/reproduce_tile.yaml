@@ -103,17 +103,11 @@ jobs:
       - name: Build tile + local TT precheck (flow/build.sh, macro step done above)
         run: SKIP_MACRO=1 flow/build.sh ci
 
-      # The sign-off STA (D3) needs the ngspice .lib files in build/macro/lib/ (characterize.yaml). Until they are
-      # committed, this runs the same script on OpenRAM's ANALYTICAL TT .lib, only to test the STA plumbing:
-      # those numbers are estimates and are not used for sign-off.
+      # Sign-off STA (D3) with the ngspice .lib files committed in build/macro/lib/ (made by characterize.yaml).
+      # (OpenRAM's analytical .lib cannot stand in: the macro build writes it empty, see docs/flow_LOG.md.)
       - name: STA with the macro .lib (flow/sta.sh)
         run: |
-          if ls build/macro/lib/*.lib >/dev/null 2>&1; then
-            flow/sta.sh ci
-          else
-            mkdir -p /tmp/analytical_lib && cp build/macro_runs/ci/raw/*_TT_1p8V_25C.lib /tmp/analytical_lib/
-            LIB_DIR=/tmp/analytical_lib OUT_NAME=ci_plumbing_analytical flow/sta.sh ci
-          fi
+          if ls build/macro/lib/*.lib >/dev/null 2>&1; then flow/sta.sh ci; else echo "no build/macro/lib/*.lib yet: STA skipped"; fi
 
       - name: Upload STA reports
         if: always()
