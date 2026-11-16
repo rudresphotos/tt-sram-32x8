@@ -13,3 +13,6 @@ test/tb_gl.vvp
 .venv-flow/
 build/macro_runs/
 build/precheck/
+build/config_sta.yaml
+build/sta/
+build/char/

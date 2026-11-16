@@ -8,6 +8,7 @@
 # usage: flow/build_macro.sh [RUN_TAG]       (default tag: repro)  outputs also kept in build/macro_runs/RUN_TAG/
 # env:   OPENRAM_DIR   OpenRAM checkout + its PDK (default ~/OpenRAM, as in the team's setup)
 #        INSTALL=0     build and check only, do not overwrite build/macro/
+#        SETUP_ONLY=1  stop after step 3 (OpenRAM + venvs + PDK ready; used by flow/characterize.sh)
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -63,9 +64,12 @@ step "3/7 OpenRAM's SKY130 PDK + SRAM cell library (first time: downloads; Nix a
 [ -d "$OR/technology/sky130/maglef_lib" ] || nixdev make sky130-install || fail "make sky130-install"
 nixdev bash -c 'for t in magic netgen ngspice klayout; do printf "%-8s %s\n" "$t" "$(readlink -f "$(command -v $t)" || echo MISSING)"; done'
 
+if [ "${SETUP_ONLY:-0}" = 1 ]; then echo "SETUP_ONLY=1: OpenRAM environment ready in $OR"; exit 0; fi
+
 step "4/7 OpenRAM: generate $NAME (OpenRAM runs its own Magic DRC + Netgen LVS)"
 cp "$ROOT/flow/openram/sky130_sram_common.py" "$ROOT/flow/openram/$NAME.py" "$OR/macros/sram_configs/"
 rm -rf "$OR/macros/macro/$NAME"
+mkdir -p "$OR/macros/macro"   # OpenRAM creates only the last directory level of output_path
 nixdev bash -c "cd macros && '$OR/.venv/bin/python3' -u ../sram_compiler.py -v sram_configs/$NAME.py" \
   || fail "OpenRAM (see $OR/macros/macro/$NAME/$NAME.log)"
 RAW="$OR/macros/macro/$NAME"

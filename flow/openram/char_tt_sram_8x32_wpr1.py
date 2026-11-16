@@ -1,0 +1,19 @@
+# OpenRAM characterization config for the tile's macro (used by flow/characterize.sh with OpenRAM's sram_char.py).
+# Same SRAM organisation as tt_sram_8x32_wpr1.py, plus:
+#  - spice simulation with ngspice instead of OpenRAM's analytical (estimated) delay model
+#  - exactly one PVT corner per run, chosen by CHAR_CORNER, matching LibreLane's three corners:
+#      TT 1.80 V 25 C  (nom_tt_025C_1v80)   SS 1.60 V 100 C  (ss_100C_1v60)   FF 1.95 V -40 C  (ff_n40C_1v95)
+#  - input slew / output load table indices moved from OpenRAM's defaults (slew 1.25-40 ps, load 1.7-28 fF)
+#    to the range the tile's std cells actually drive / present (0.05-0.8 ns, 3.4-55 fF), so STA reads the
+#    table instead of extrapolating far outside it.
+import os
+exec(open(os.path.join(os.path.dirname(__file__), 'tt_sram_8x32_wpr1.py')).read())
+
+CORNERS = {"TT": ("TT", 1.8, 25), "SS": ("SS", 1.6, 100), "FF": ("FF", 1.95, -40)}
+use_specified_corners = [CORNERS[os.environ.get("CHAR_CORNER", "TT")]]
+analytical_delay = False
+spice_name = "ngspice"
+num_sim_threads = int(os.environ.get("CHAR_THREADS", "4"))
+slew_scales = [10, 40, 160]      # x rise_time 0.005 ns  -> 0.05, 0.2, 0.8 ns
+load_scales = [0.5, 2, 8]        # x dff_in_cap 6.89 fF  -> 3.445, 13.78, 55.12 fF
+output_path = "char/{}/".format(os.environ.get("CHAR_CORNER", "TT"))
