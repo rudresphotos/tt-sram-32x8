@@ -79,6 +79,21 @@ Network note: `raw.githubusercontent.com` is blocked on this network (curl error
   1.000000 um^2`, so 3 of 4 checks FAIL as intended.
 - Not yet run: the real LibreLane build. That needs the fork on GitHub (next step).
 
+### 10. Fork and CI set up (done by Claude with the contributor's saved GitHub login, as asked)
+- Upstream check: `GET /repos/rudresphotos/tt-sram-32x8/commits/main` -> `b34ab81`, the same as the bundle's
+  `main`, so no rebase was needed.
+- Saved GitHub login has scopes `gist, read:org, repo, workflow` (from the `x-oauth-scopes` API header), so
+  pushing workflow files works without a new token.
+- Created fork `AaryanSharmaCodes/tt-sram-32x8` (API `POST .../forks`). Remotes in `~/tt-sram-32x8`:
+  `origin` = fork, `upstream` = rudresphotos, `bundle` = pack bundle. Nothing was pushed to upstream.
+- Pushed `flow/reproducible-build`. GitHub ran all 3 workflows on the fork. Disabled `gds` and `docs` **on the
+  fork only** (API `PUT .../actions/workflows/<id>/disable`) and cancelled their 2 runs, so the fork never
+  tries to deploy Pages. Upstream workflows are untouched.
+- First `reproduce tile` run (`472aa6f`) failed at once: YAML error at line 93 (a `run:` value starting with
+  `{` is read as a YAML mapping). Fixed with a `|` block, checked with `yaml.safe_load`, pushed as `952253d`.
+- Run of `952253d`: https://github.com/AaryanSharmaCodes/tt-sram-32x8/actions/runs/43921286981 (result below).
+
 ## Open items
-- Contributor: create the fork on GitHub, enable Actions, disable the fork's `gds`/`docs` workflows, and set up
-  push access (a token with `workflow` scope is needed to push files under `.github/workflows/`).
+- Contributor: revoke and re-create the GitHub CLI token. It was printed once in Claude's tool output on
+  2026-11-16 during a credential check (GitHub -> Settings -> Applications -> Authorized OAuth Apps ->
+  GitHub CLI -> Revoke, then log in again).
