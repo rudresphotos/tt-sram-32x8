@@ -7,6 +7,8 @@
 # but names the probe nets from patterns instead of that timing-graph search.
 # One characterizer-only patch (flow/openram/openram_memchar_storage_names.diff): the bitcell storage nets are
 # read from the config (sky130_custom_cell calls them Q / Qbar; OpenRAM hard-codes Q / Q_bar). No circuit change.
+# The netlist copy that is simulated has 6 transistor sizes rewritten from W=0.74u to W=0.74 (same size, the unit
+# convention of the rest of the netlist under the PDK's .option scale=1.0u), see flow/normalize_units.py.
 #
 # usage: flow/characterize.sh CORNER [SPICE_NETLIST]
 #   CORNER         TT (1.80 V 25 C) | SS (1.60 V 100 C) | FF (1.95 V -40 C)   = LibreLane's three corners
@@ -24,14 +26,20 @@ step() { echo; echo "=== [$(date -u +%H:%M:%S)] $* ==="; }
 fail() { echo; echo "CHARACTERIZATION FAILED at step: $*" >&2; exit 1; }
 [ -s "$SP" ] || fail "netlist $SP not found (run flow/build_macro.sh first)"
 
-step "1/4 OpenRAM environment + characterizer patch"
+step "1/5 OpenRAM environment + characterizer patch"
 SETUP_ONLY=1 "$ROOT/flow/build_macro.sh" >/dev/null || fail "OpenRAM setup (run SETUP_ONLY=1 flow/build_macro.sh to see why)"
 export OPENRAM_HOME="$OR/compiler" OPENRAM_TECH="$OR/technology" PDK_ROOT="$OR" CHAR_CORNER="$CORNER"
 CPATCH="$ROOT/flow/openram/openram_memchar_storage_names.diff"
 git -C "$OR" apply --reverse --check "$CPATCH" 2>/dev/null || git -C "$OR" apply "$CPATCH" || fail "apply $CPATCH"
 git -C "$OR" diff --stat
 
-step "2/4 ngspice characterization, corner $CORNER, netlist $SP"
+step "2/5 netlist units for ngspice (flow/normalize_units.py: 6 transistors of sky130_custom_nand3_dec)"
+mkdir -p "$ROOT/build/char/$CORNER"
+SIM_SP="$ROOT/build/char/$CORNER/${NAME}_sim.sp"
+"$ROOT/.venv-flow/bin/python3" "$ROOT/flow/normalize_units.py" "$SP" "$SIM_SP" 6 || fail "netlist unit normalization"
+SP="$SIM_SP"
+
+step "3/5 ngspice characterization, corner $CORNER, netlist $SP"
 cp "$ROOT/flow/openram/sky130_sram_common.py" "$ROOT/flow/openram/$NAME.py" "$ROOT/flow/openram/char_$NAME.py" "$OR/macros/sram_configs/"
 rm -rf "$OR/macros/char/$CORNER"
 mkdir -p "$OR/macros/char"
@@ -41,13 +49,14 @@ start=$(date +%s)
    || fail "sram_char.py (see output above)"
 echo "characterization took $(( $(date +%s) - start )) s"
 
-step "3/4 collect the .lib"
+step "4/5 collect the .lib"
 LIB=$(ls "$OR/macros/char/$CORNER"/*.lib 2>/dev/null | head -1)
 [ -s "$LIB" ] || fail "no .lib written in $OR/macros/char/$CORNER"
 mkdir -p "$ROOT/build/macro/lib" "$ROOT/build/char/$CORNER"
 cp -a "$OR/macros/char/$CORNER/." "$ROOT/build/char/$CORNER/"
+cp "$SIM_SP" "$ROOT/build/char/$CORNER/" 2>/dev/null || true
 cp "$LIB" "$ROOT/build/macro/lib/"
 echo "$(basename "$LIB")"
 
-step "4/4 sanity check"
+step "5/5 sanity check"
 "$ROOT/.venv-flow/bin/python3" "$ROOT/flow/lib_sanity.py" "$ROOT/build/macro/lib/$(basename "$LIB")" || fail "lib sanity check"
