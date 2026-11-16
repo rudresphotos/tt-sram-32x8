@@ -1,0 +1,58 @@
+# LibreLane 3.0.14 config: place the OpenRAM SRAM macro in a TT 1x2 tile, add TT's met4 power stripes, route to the TT pins.
+# Settings below "TT defaults" are copied from TinyTapeout/ttsky-verilog-template src/config.json and tt-support-tools project.py.
+meta:
+  version: 3
+  flow: Classic
+
+DESIGN_NAME: tt_um_rudresphotos_sram
+VERILOG_FILES:
+  - dir::src/tt_um_rudresphotos_sram.v
+
+# --- TT tile (tt-support-tools/tech/sky130A) ---
+FP_SIZING: absolute
+DIE_AREA: [0, 0, 161.00, 225.76]
+FP_DEF_TEMPLATE: dir::def/tt_block_1x2_pg.def
+VDD_PIN: VPWR
+GND_PIN: VGND
+RT_MAX_LAYER: met4
+
+# --- TT defaults ---
+CLOCK_PORT: clk
+CLOCK_PERIOD: 40
+RUN_CTS: true
+RUN_KLAYOUT_XOR: false
+RUN_KLAYOUT_DRC: false
+DESIGN_REPAIR_BUFFER_OUTPUT_PORTS: false
+TOP_MARGIN_MULT: 1
+BOTTOM_MARGIN_MULT: 1
+LEFT_MARGIN_MULT: 6
+RIGHT_MARGIN_MULT: 6
+GRT_ALLOW_CONGESTION: true
+FP_IO_HLENGTH: 2
+FP_IO_VLENGTH: 2
+FP_PDN_MULTILAYER: false   # power grid itself is defined in pdn/pdn_cfg.tcl (two full-height met4 stripes)
+MAGIC_DEF_LABELS: false
+MAGIC_WRITE_LEF_PINONLY: true
+PL_TARGET_DENSITY_PCT: 60
+
+# --- SRAM macro ---
+MACROS:
+  tt_sram_8x32_wpr1:
+    gds:
+      - dir::macro/tt_sram_8x32_wpr1.gds
+    lef:
+      - dir::macro/tt_sram_8x32_wpr1.lef
+    nl:
+      - dir::macro/tt_sram_8x32_wpr1.v
+    instances:
+      mem:
+        location: [6.44, 8.16]   # one std-cell row kept below the macro (DPL needs rows on both sides)
+        orientation: N
+
+PDN_MACRO_CONNECTIONS:
+  - "mem VPWR VGND vccd1 vssd1"
+PDN_CFG: dir::pdn/pdn_cfg.tcl
+PDN_HORIZONTAL_HALO: 0
+PDN_VERTICAL_HALO: 0
+FP_MACRO_HORIZONTAL_HALO: 3.68
+FP_MACRO_VERTICAL_HALO: 2.72

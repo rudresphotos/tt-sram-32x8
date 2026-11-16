@@ -1,0 +1,154 @@
+[2026-11-15 21:16:42.216655] WARNING: file globals.py: line 174: Failed to find coverage installation. This can be installed with pip3 install coverage
+
+[2026-11-15 21:16:42.357769] [openram.globals/init_openram]: Initializing OpenRAM...
+[2026-11-15 21:16:42.357917] [openram.globals/setup_paths]: OpenRAM source code found in /home/rudr/OpenRAM/compiler
+[2026-11-15 21:16:42.358140] [openram.globals/setup_paths]: Temporary files saved in /tmp/openram_rudr_672_temp/
+[2026-11-15 21:16:42.358491] [openram.globals/read_config]: Configuration file is /home/rudr/OpenRAM/macros/sram_configs/tt_sram_8x32_wpr1.py
+[2026-11-15 21:16:42.361679] [openram.globals/read_config]: Output saved in /home/rudr/OpenRAM/macros/macro/tt_sram_8x32_wpr1/
+[2026-11-15 21:16:42.362175] [openram.globals/install_nix]: Bootstrapping toolchain with Nix...
+[2026-11-15 21:16:47.158071] [openram.globals/import_tech]: Tech directory found in /home/rudr/OpenRAM/technology:/home/rudr/OpenRAM/technology
+[2026-11-15 21:16:47.158306] [openram.globals/import_tech]: Adding technology path: /home/rudr/OpenRAM/technology
+[2026-11-15 21:16:47.158490] [openram.globals/import_tech]: Adding technology path: /home/rudr/OpenRAM/technology
+[2026-11-15 21:16:47.171518] [openram.globals/init_paths]: Creating temp directory: /tmp/openram_rudr_672_temp/
+[2026-11-15 21:16:47.414750] [openram.globals/setup_bitcell]: Using bitcell: bitcell_1port
+[2026-11-15 21:16:49.203049] [openram.characterizer/<module>]: Initializing characterizer...
+[2026-11-15 21:16:49.216278] [openram.characterizer/<module>]: Analytical model enabled.
+[2026-11-15 21:16:49.232756] [openram.verify/<module>]: Initializing verify...
+[2026-11-15 21:16:49.248666] [openram.verify/<module>]: Finding DRC/LVS/PEX tools.
+[2026-11-15 21:16:49.263245] [openram.globals/get_tool]: Using DRC: /nix/store/1zcyq032zc3mzhmgs2j3q2rmfrjj5v6b-magic-vlsi-8.3.629/bin/magic
+[2026-11-15 21:16:49.276107] [openram.globals/get_tool]: Using LVS: /nix/store/h3crgmx1w7h86qjpr131igi7p576mp3x-netgen-1.5.318/bin/netgen
+[2026-11-15 21:16:49.288454] [openram.globals/get_tool]: Using PEX: /nix/store/1zcyq032zc3mzhmgs2j3q2rmfrjj5v6b-magic-vlsi-8.3.629/bin/magic
+[2026-11-15 21:16:49.290304] [openram.globals/setup_bitcell]: Using bitcell: bitcell_1port
+[2026-11-15 21:16:49.290375] |==============================================================================|
+[2026-11-15 21:16:49.290409] |=========                      OpenRAM v1.2.50                       =========|
+[2026-11-15 21:16:49.290437] |=========                                                            =========|
+[2026-11-15 21:16:49.290463] |=========               VLSI Design and Automation Lab               =========|
+[2026-11-15 21:16:49.290488] |=========        Computer Science and Engineering Department         =========|
+[2026-11-15 21:16:49.290513] |=========            University of California Santa Cruz             =========|
+[2026-11-15 21:16:49.290538] |=========                                                            =========|
+[2026-11-15 21:16:49.290562] |=========          Usage help: openram-user-group@ucsc.edu           =========|
+[2026-11-15 21:16:49.290586] |========= Development help: https://github.com/VLSIDA/OpenRAM/issues =========|
+[2026-11-15 21:16:49.290609] |=========                See LICENSE for license info                =========|
+[2026-11-15 21:16:49.290632] |==============================================================================|
+[2026-11-15 21:16:49.290665] ** Start: 11/15/2026 21:16:49
+[2026-11-15 21:16:49.290697] Technology: sky130
+[2026-11-15 21:16:49.290737] Total size: 256 bits
+[2026-11-15 21:16:49.290774] Word size: 8
+Words: 32
+Banks: 1
+[2026-11-15 21:16:49.290810] RW ports: 1
+R-only ports: 0
+W-only ports: 0
+[2026-11-15 21:16:49.290847] DRC/LVS/PEX is only run on the top-level design to save run-time (inline_lvsdrc=True to do inline checking).
+[2026-11-15 21:16:49.290918] Characterization is disabled (using analytical delay models) (analytical_delay=False to simulate).
+[2026-11-15 21:16:49.290964] Only generating nominal corner timing.
+[2026-11-15 21:16:49.291019] Words per row: 1
+[2026-11-15 21:16:49.291065] Output files are: 
+[2026-11-15 21:16:49.291100] /home/rudr/OpenRAM/macros/macro/tt_sram_8x32_wpr1/tt_sram_8x32_wpr1.lvs
+[2026-11-15 21:16:49.291127] /home/rudr/OpenRAM/macros/macro/tt_sram_8x32_wpr1/tt_sram_8x32_wpr1.sp
+[2026-11-15 21:16:49.291149] /home/rudr/OpenRAM/macros/macro/tt_sram_8x32_wpr1/tt_sram_8x32_wpr1.v
+[2026-11-15 21:16:49.291171] /home/rudr/OpenRAM/macros/macro/tt_sram_8x32_wpr1/tt_sram_8x32_wpr1.lib
+[2026-11-15 21:16:49.291192] /home/rudr/OpenRAM/macros/macro/tt_sram_8x32_wpr1/tt_sram_8x32_wpr1.py
+[2026-11-15 21:16:49.291214] /home/rudr/OpenRAM/macros/macro/tt_sram_8x32_wpr1/tt_sram_8x32_wpr1.html
+[2026-11-15 21:16:49.291235] /home/rudr/OpenRAM/macros/macro/tt_sram_8x32_wpr1/tt_sram_8x32_wpr1.log
+[2026-11-15 21:16:49.291256] /home/rudr/OpenRAM/macros/macro/tt_sram_8x32_wpr1/tt_sram_8x32_wpr1.lef
+[2026-11-15 21:16:49.291277] /home/rudr/OpenRAM/macros/macro/tt_sram_8x32_wpr1/tt_sram_8x32_wpr1.gds
+[2026-11-15 21:16:49.300491] [openram.sram_config/recompute_sizes]: Recomputing with words per row: 1
+[2026-11-15 21:16:49.300816] [openram.sram_config/recompute_sizes]: Rows: 32 Cols: 8
+[2026-11-15 21:16:49.301130] [openram.sram_config/recompute_sizes]: Row addr size: 6 Col addr size: 0 Bank addr size: 6
+[2026-11-15 21:16:49.301561] [openram.sram_config/compute_sizes]: Set SRAM Words Per Row=1
+[2026-11-15 21:16:49.359631] [openram.modules.bitcell_base_array/__init__]: Creating tt_sram_8x32_wpr1_capped_replica_bitcell_array 33 x 9
+[2026-11-15 21:16:49.360404] [openram.modules.capped_replica_bitcell_array/__init__]: Creating tt_sram_8x32_wpr1_capped_replica_bitcell_array 33 x 9 rbls: [1, 0] left_rbl: [0] right_rbl: []
+[2026-11-15 21:16:49.361599] [openram.modules.bitcell_base_array/__init__]: Creating tt_sram_8x32_wpr1_replica_bitcell_array 33 x 9
+[2026-11-15 21:16:49.362306] [openram.modules.replica_bitcell_array/__init__]: Creating tt_sram_8x32_wpr1_replica_bitcell_array 33 x 9 rbls: [1, 0] left_rbl: [0] right_rbl: []
+[2026-11-15 21:16:49.363698] [openram.modules.bitcell_base_array/__init__]: Creating tt_sram_8x32_wpr1_bitcell_array 33 x 9
+[2026-11-15 21:16:49.364619] [openram.modules.bitcell_array/__init__]: Creating tt_sram_8x32_wpr1_bitcell_array 33 x 9
+[2026-11-15 21:16:49.419481] [openram.modules.bitcell_base_array/__init__]: Creating tt_sram_8x32_wpr1_replica_column 34 x 1
+[2026-11-15 21:16:49.442038] [openram.modules.bitcell_base_array/__init__]: Creating tt_sram_8x32_wpr1_dummy_array 1 x 9
+[2026-11-15 21:16:49.458071] [openram.modules.bitcell_base_array/__init__]: Creating tt_sram_8x32_wpr1_dummy_array_0 1 x 10
+[2026-11-15 21:16:49.462858] [openram.modules.bitcell_base_array/__init__]: Creating tt_sram_8x32_wpr1_dummy_array_1 1 x 10
+[2026-11-15 21:16:49.467251] [openram.modules.bitcell_base_array/__init__]: Creating tt_sram_8x32_wpr1_dummy_array_2 36 x 1
+[2026-11-15 21:16:49.477869] [openram.modules.bitcell_base_array/__init__]: Creating tt_sram_8x32_wpr1_dummy_array_3 36 x 1
+[2026-11-15 21:16:49.507919] [openram.modules.and2_dec/__init__]: Creating and2_dec and2_dec
+[2026-11-15 21:16:49.516776] [openram.modules.and3_dec/__init__]: Creating and3_dec and3_dec
+[2026-11-15 21:16:49.542757] [openram.modules.and4_dec/__init__]: Creating and4_dec and4_dec
+[2026-11-15 21:16:49.637350] [openram.modules.wordline_driver_array/__init__]: Creating tt_sram_8x32_wpr1_wordline_driver_array
+[2026-11-15 21:16:49.638214] [openram.modules.wordline_driver/__init__]: Creating wordline_driver wordline_driver
+[2026-11-15 21:16:49.685523] [openram.modules.and2_dec/__init__]: Creating and2_dec and2_dec_0
+[2026-11-15 21:16:49.706939] [openram.modules.precharge_array/__init__]: Creating tt_sram_8x32_wpr1_precharge_array
+[2026-11-15 21:16:49.717167] [openram.modules.sense_amp_array/__init__]: Creating tt_sram_8x32_wpr1_sense_amp_array
+[2026-11-15 21:16:49.734007] [openram.modules.write_driver_array/__init__]: Creating tt_sram_8x32_wpr1_write_driver_array
+[2026-11-15 21:16:49.787833] [openram.modules.dff_array/__init__]: Creating tt_sram_8x32_wpr1_row_addr_dff rows=6 cols=1
+[2026-11-15 21:16:49.793460] [openram.modules.dff_array/__init__]: Creating tt_sram_8x32_wpr1_data_dff rows=1 cols=9
+[2026-11-15 21:16:49.798638] [openram.modules.dff_array/__init__]: Creating tt_sram_8x32_wpr1_spare_wen_dff rows=1 cols=1
+[2026-11-15 21:16:49.801300] [openram.modules.control_logic_base/__init__]: Creating control_logic_rw
+[2026-11-15 21:16:49.802230] [openram.modules.dff_buf/__init__]: Creating tt_sram_8x32_wpr1_dff_buf
+[2026-11-15 21:16:49.814036] [openram.modules.dff_buf_array/__init__]: Creating tt_sram_8x32_wpr1_dff_buf_array
+[2026-11-15 21:16:49.814866] [openram.modules.dff_buf/__init__]: Creating tt_sram_8x32_wpr1_dff_buf_0
+[2026-11-15 21:16:49.820569] [openram.modules.pand2/__init__]: Creating pand2 pand2
+[2026-11-15 21:16:49.825627] [openram.modules.pdriver/__init__]: creating pdriver pdriver
+[2026-11-15 21:16:49.832802] [openram.modules.pbuf/__init__]: creating pbuf with size of 9
+[2026-11-15 21:16:49.838586] [openram.modules.pdriver/__init__]: creating pdriver pdriver_0
+[2026-11-15 21:16:49.855084] [openram.modules.pdriver/__init__]: creating pdriver pdriver_1
+[2026-11-15 21:16:49.861680] [openram.modules.pand3/__init__]: Creating pand3 pand3
+[2026-11-15 21:16:49.866483] [openram.modules.pdriver/__init__]: creating pdriver pdriver_2
+[2026-11-15 21:16:49.874036] [openram.modules.pand3/__init__]: Creating pand3 pand3_0
+[2026-11-15 21:16:49.874810] [openram.modules.pdriver/__init__]: creating pdriver pdriver_3
+[2026-11-15 21:16:49.878301] [openram.modules.pdriver/__init__]: creating pdriver pdriver_4
+[2026-11-15 21:16:49.882567] [openram.modules.delay_chain/__init__]: creating delay chain [4, 4, 4, 4, 4, 4, 4, 4, 4]
+[2026-11-15 21:16:49.968070] ** Submodules: 0.7 seconds
+[2026-11-15 21:16:49.977227] ** Placement: 0.0 seconds
+[2026-11-15 21:16:52.626515] [openram.base.hierarchy_layout/get_bbox]: Size: 132.935 x 166.03 with perimeter margin 0
+[2026-11-15 21:16:52.646459] [openram.router.router_tech/__init__]: Minimum track width: 0.680
+[2026-11-15 21:16:52.646957] [openram.router.router_tech/__init__]: Minimum track space: 0.300
+[2026-11-15 21:16:52.647398] [openram.router.router_tech/__init__]: Minimum track wire width: 0.380
+[2026-11-15 21:16:52.647799] [openram.router.signal_escape_router/route]: Running signal escape router...
+[2026-11-15 21:16:55.515210] [openram.router.router_tech/__init__]: Minimum track width: 0.680
+[2026-11-15 21:16:55.515649] [openram.router.router_tech/__init__]: Minimum track space: 0.300
+[2026-11-15 21:16:55.516076] [openram.router.router_tech/__init__]: Minimum track wire width: 0.380
+[2026-11-15 21:16:55.516385] [openram.router.supply_router/route]: Running router for vdd and gnd...
+[2026-11-15 21:17:25.196401] ** Routing: 35.2 seconds
+[2026-11-15 21:17:35.332739] [openram.verify.magic/run_drc]: DRC Errors tt_sram_8x32_wpr1	0
+[2026-11-15 21:17:36.350111] [openram.verify.magic/run_lvs]: tt_sram_8x32_wpr1	LVS matches
+[2026-11-15 21:17:36.350281] ** Verification: 11.1 seconds
+[2026-11-15 21:17:36.350475] ** SRAM creation: 47.0 seconds
+[2026-11-15 21:17:36.350795] SP: Writing to /home/rudr/OpenRAM/macros/macro/tt_sram_8x32_wpr1/tt_sram_8x32_wpr1.sp
+[2026-11-15 21:17:36.417601] [openram.characterizer.functional/__init__]: Random seed for functional simulation: 1794777456416658569
+[2026-11-15 21:17:36.440901] ** Spice writing: 0.1 seconds
+[2026-11-15 21:17:36.440976] DELAY: Writing stimulus...
+[2026-11-15 21:17:36.473182] ERROR: file simulation.py: line 613: Could not find bl net in timing paths.
+
+[2026-11-15 21:17:36.473991] WARNING: file sram.py: line 134: Skipping delay stimulus: 
+
+[2026-11-15 21:17:36.474086] ** DELAY: 0.0 seconds
+[2026-11-15 21:17:36.485887] GDS: Writing to /home/rudr/OpenRAM/macros/macro/tt_sram_8x32_wpr1/tt_sram_8x32_wpr1.gds
+[2026-11-15 21:17:36.635436] ** GDS: 0.1 seconds
+[2026-11-15 21:17:36.635509] LEF: Writing to /home/rudr/OpenRAM/macros/macro/tt_sram_8x32_wpr1/tt_sram_8x32_wpr1.lef
+[2026-11-15 21:17:36.641707] ** LEF: 0.0 seconds
+[2026-11-15 21:17:36.641754] LVS: Writing to /home/rudr/OpenRAM/macros/macro/tt_sram_8x32_wpr1/tt_sram_8x32_wpr1.lvs.sp
+[2026-11-15 21:17:36.656736] ** LVS writing: 0.0 seconds
+[2026-11-15 21:17:36.656799] LIB: Characterizing... 
+[2026-11-15 21:17:36.660251] [openram.characterizer.lib/prepare_tables]: Slews: [0.00125 0.005   0.04   ]
+[2026-11-15 21:17:36.660760] [openram.characterizer.lib/prepare_tables]: Loads: [ 1.7225  6.89   27.56  ]
+[2026-11-15 21:17:36.661198] [openram.characterizer.lib/prepare_tables]: self.load_slews : [(np.float64(1.7225), np.float64(0.00125)), (np.float64(6.89), np.float64(0.00125)), (np.float64(27.56), np.float64(0.00125)), (np.float64(1.7225), np.float64(0.005)), (np.float64(6.89), np.float64(0.005)), (np.float64(27.56), np.float64(0.005)), (np.float64(1.7225), np.float64(0.04)), (np.float64(6.89), np.float64(0.04)), (np.float64(27.56), np.float64(0.04))]
+[2026-11-15 21:17:36.661644] [openram.characterizer.lib/characterize_corners]: Characterizing corners: [('TT', 1.8, 25)]
+[2026-11-15 21:17:36.662003] [openram.characterizer.lib/characterize_corners]: Corner: ('TT', 1.8, 25)
+[2026-11-15 21:17:36.662381] [openram.characterizer.lib/characterize_corners]: Writing to /home/rudr/OpenRAM/macros/macro/tt_sram_8x32_wpr1/tt_sram_8x32_wpr1_TT_1p8V_25C.lib
+[2026-11-15 21:17:36.670641] ERROR: file simulation.py: line 613: Could not find bl net in timing paths.
+
+[2026-11-15 21:17:36.671008] WARNING: file sram.py: line 195: Skipping lib characterization: 
+
+[2026-11-15 21:17:36.671150] ** Characterization: 0.0 seconds
+[2026-11-15 21:17:36.671356] Config: Writing to /home/rudr/OpenRAM/macros/macro/tt_sram_8x32_wpr1/tt_sram_8x32_wpr1.py
+[2026-11-15 21:17:36.671401] ** Config: 0.0 seconds
+[2026-11-15 21:17:36.679065] Datasheet: Writing to /home/rudr/OpenRAM/macros/macro/tt_sram_8x32_wpr1/tt_sram_8x32_wpr1.html
+[2026-11-15 21:17:36.679670] WARNING: file sram.py: line 216: Skipping datasheet: [Errno 2] No such file or directory: '/home/rudr/OpenRAM/macros/macro/tt_sram_8x32_wpr1//datasheet.info'
+
+[2026-11-15 21:17:36.679725] ** Datasheet: 0.0 seconds
+[2026-11-15 21:17:36.679759] Verilog: Writing to /home/rudr/OpenRAM/macros/macro/tt_sram_8x32_wpr1/tt_sram_8x32_wpr1.v
+[2026-11-15 21:17:36.680168] ** Verilog: 0.0 seconds
+[2026-11-15 21:17:36.680539] [openram.globals/purge_temp]: Purging temp directory: /tmp/openram_rudr_672_temp/
+[2026-11-15 21:17:36.686800] [openram.verify.magic/print_drc_stats]: DRC runs: 1
+[2026-11-15 21:17:36.687042] [openram.verify.magic/print_lvs_stats]: LVS runs: 1
+[2026-11-15 21:17:36.687220] [openram.verify.magic/print_pex_stats]: PEX runs: 0
+[2026-11-15 21:17:36.687264] ** End: 47.4 seconds
