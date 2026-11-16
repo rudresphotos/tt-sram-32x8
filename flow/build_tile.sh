@@ -34,7 +34,8 @@ done
 echo "outputs present"
 
 step "3/4 gate-level TT-pin test (iverilog, test/tb_gl.v)"
-GL_OUT="$(PDK_ROOT="$PDK_ROOT_USED" NETLIST="$RUN/final/pnl/$TOP.pnl.v" bash "$ROOT/test/run_gl.sh")"   # run via bash: run_gl.sh is not executable in git || fail "gate-level sim did not run"
+# run via bash: test/run_gl.sh is not executable in git
+GL_OUT="$(PDK_ROOT="$PDK_ROOT_USED" NETLIST="$RUN/final/pnl/$TOP.pnl.v" bash "$ROOT/test/run_gl.sh")" || fail "gate-level sim did not run"
 echo "$GL_OUT"
 echo "$GL_OUT" > "$RUN/gl_test.txt"
 echo "$GL_OUT" | grep -q "0 errors -> PASS" || fail "gate-level test did not PASS"

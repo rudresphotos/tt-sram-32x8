@@ -2,21 +2,29 @@
 """Compare a new LibreLane run against the signed-off try9 run.
 
 Checks, in this order, and prints every number it uses:
+  0. (only if a macro dir is given, i.e. the macro was rebuilt by flow/build_macro.sh) macro GDS XOR and
+     LEF/V bytes vs the committed build/macro/ files
   1. sign-off metrics that must be 0 (DRC, LVS, antenna, power grid, ...)
   2. every metric in try9's final/metrics.json against the new run (exact match)
   3. GDS geometry: KLayout XOR per layer of the new GDS vs the committed gds/<top>.gds, plus pin labels
   4. LEF: text diff vs the committed lef/<top>.lef
 
-usage: python3 flow/compare_try9.py <run dir, e.g. build/runs/repro>
+usage: python3 flow/compare_try9.py <run dir, e.g. build/runs/repro> [macro dir, e.g. build/macro_runs/repro]
 needs: pip package `klayout` (Python module klayout.db)
-exit code 0 only if all four checks pass.
+exit code 0 only if all checks pass.
 """
 import difflib
 import json
+import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from gds_xor import xor_gds  # noqa: E402
+
 TOP = "tt_um_rudresphotos_sram"
+MACRO = "tt_sram_8x32_wpr1"
 ROOT = Path(__file__).resolve().parent.parent
 REF_METRICS = ROOT / "flow/reference/try9/metrics.json"
 REF_GDS = ROOT / f"gds/{TOP}.gds"
@@ -61,42 +69,25 @@ def check_metrics(new, ref):
 
 
 def check_xor(new_gds):
-    import klayout.db as db
-
     print(f"\n## 3. GDS XOR: {new_gds}\n        vs committed {REF_GDS.relative_to(ROOT)}")
-    la, lb = db.Layout(), db.Layout()
-    la.read(str(new_gds))
-    lb.read(str(REF_GDS))
-    if la.dbu != lb.dbu:
-        print(f"  BAD database units differ: {la.dbu} vs {lb.dbu}")
-        return False
-    ca, cb = la.cell(TOP), lb.cell(TOP)
-    if ca is None or cb is None:
-        print(f"  BAD top cell {TOP} missing (new: {ca is not None}, ref: {cb is not None})")
-        return False
+    return xor_gds(new_gds, REF_GDS, TOP, out=print)
 
-    def layers(ly):
-        return {(i.layer, i.datatype): idx for idx, i in ((idx, ly.get_info(idx)) for idx in ly.layer_indexes())}
 
-    pa, pb = layers(la), layers(lb)
-    ok = True
-    n_layers = 0
-    for key in sorted(set(pa) | set(pb)):
-        ra = db.Region(ca.begin_shapes_rec(pa[key])) if key in pa else db.Region()
-        rb = db.Region(cb.begin_shapes_rec(pb[key])) if key in pb else db.Region()
-        ra.merge()
-        rb.merge()
-        x = ra ^ rb
-        n_layers += 1
-        if not x.is_empty():
-            ok = False
-            print(f"  DIFF layer {key[0]}/{key[1]}: {x.count()} XOR polygons, area {x.area() * la.dbu ** 2:.6f} um^2")
-        ta = sorted((t.string, t.x, t.y) for t in db.Texts(ca.begin_shapes_rec(pa[key]))) if key in pa else []
-        tb = sorted((t.string, t.x, t.y) for t in db.Texts(cb.begin_shapes_rec(pb[key]))) if key in pb else []
-        if ta != tb:
-            ok = False
-            print(f"  DIFF layer {key[0]}/{key[1]}: labels differ ({len(ta)} new vs {len(tb)} ref)")
-    print(f"  {n_layers} layers compared: {'XOR empty, labels equal' if ok else 'DIFFERENCES above'}")
+def committed(path):
+    """The file as committed in git HEAD (build/macro/ may have been overwritten by flow/build_macro.sh)."""
+    data = subprocess.run(["git", "-C", str(ROOT), "show", f"HEAD:{path}"], check=True, capture_output=True).stdout
+    tmp = Path(tempfile.mkdtemp()) / Path(path).name
+    tmp.write_bytes(data)
+    return tmp
+
+
+def check_macro(mdir):
+    print(f"\n## 0. Macro from OpenRAM + fix_implants ({mdir}) vs committed build/macro/")
+    ok = xor_gds(mdir / f"{MACRO}.gds", committed(f"build/macro/{MACRO}.gds"), MACRO, out=print)
+    for ext in ("lef", "orig.lef", "v"):
+        same = (mdir / f"{MACRO}.{ext}").read_bytes() == committed(f"build/macro/{MACRO}.{ext}").read_bytes()
+        ok &= same
+        print(f"  {MACRO}.{ext}: {'byte-identical' if same else 'DIFFERS'}")
     return ok
 
 
@@ -114,12 +105,15 @@ def check_lef(new_lef):
 
 
 def main():
-    if len(sys.argv) != 2:
+    if len(sys.argv) not in (2, 3):
         sys.exit(__doc__)
     run = Path(sys.argv[1]).resolve()
     new = json.loads((run / "final/metrics.json").read_text())
     ref = json.loads(REF_METRICS.read_text())
-    results = {
+    results = {}
+    if len(sys.argv) == 3:
+        results["macro == committed build/macro"] = check_macro(Path(sys.argv[2]).resolve())
+    results |= {
         "sign-off metrics": check_signoff(new),
         "metrics == try9": check_metrics(new, ref),
         "GDS XOR == committed": check_xor(run / f"final/gds/{TOP}.gds"),

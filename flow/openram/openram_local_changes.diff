@@ -1,0 +1,69 @@
+diff --git a/compiler/base/hierarchy_layout.py b/compiler/base/hierarchy_layout.py
+index 4d8eb91..d4d4b14 100644
+--- a/compiler/base/hierarchy_layout.py
++++ b/compiler/base/hierarchy_layout.py
+@@ -2197,6 +2197,18 @@ class layout():
+         # Add the moat
+         self.add_path("nwell", [ll, lr, ur, ul, ll - vector(0, 0.5 * self.nwell_width)])
+ 
++        # rudr_sram patch (TT SKY130): sky130 rule nwell.5a needs the nwell over the dnwell edge to extend
++        # >= 0.4 um outside and >= 1.03 um inside. The moat path above is only nwell_width wide, centred on
++        # the edge. Add a band 0.45 um outside / 1.08 um inside the dnwell edge (0.05 um margin each).
++        o = 0.45
++        i = 1.08
++        w = ur.x - ll.x
++        h = ur.y - ll.y
++        self.add_rect("nwell", offset=vector(ll.x - o, ll.y - o), width=w + 2 * o, height=o + i)
++        self.add_rect("nwell", offset=vector(ll.x - o, ur.y - i), width=w + 2 * o, height=o + i)
++        self.add_rect("nwell", offset=vector(ll.x - o, ll.y - o), width=o + i, height=h + 2 * o)
++        self.add_rect("nwell", offset=vector(ur.x - i, ll.y - o), width=o + i, height=h + 2 * o)
++
+         # Add the taps
+         layer_stack = self.active_stack
+         tap_spacing = 2
+diff --git a/compiler/sram.py b/compiler/sram.py
+index 4008e2a..3e11851 100644
+--- a/compiler/sram.py
++++ b/compiler/sram.py
+@@ -125,10 +125,13 @@ class sram():
+         d = delay(self.s, spname, ("TT", 5, 25), output_path=OPTS.output_path)
+         probe_address = get_probe_address(self.s)
+         probe_data = self.s.word_size - 1
+-        d.analysis_init(probe_address, probe_data)
+-        d.targ_read_ports.extend(self.s.read_ports)
+-        d.targ_write_ports = [self.s.write_ports[0]]
+-        d.write_delay_stimulus()
++        try:
++            d.analysis_init(probe_address, probe_data)
++            d.targ_read_ports.extend(self.s.read_ports)
++            d.targ_write_ports = [self.s.write_ports[0]]
++            d.write_delay_stimulus()
++        except Exception as e:
++            debug.warning("Skipping delay stimulus: {}".format(e))
+         print_time("DELAY", datetime.datetime.now(), start_time)
+ 
+         # Save trimmed spice file
+@@ -186,7 +189,10 @@ class sram():
+         start_time = datetime.datetime.now()
+         from openram.characterizer import lib
+         debug.print_raw("LIB: Characterizing... ")
+-        lib(out_dir=OPTS.output_path, sram=self.s, sp_file=sp_file)
++        try:
++            lib(out_dir=OPTS.output_path, sram=self.s, sp_file=sp_file)
++        except Exception as e:
++            debug.warning("Skipping lib characterization: {}".format(e))
+         print_time("Characterization", datetime.datetime.now(), start_time)
+ 
+         # Write the config file
+@@ -204,7 +210,10 @@ class sram():
+         from openram.datasheet import datasheet_gen
+         dname = OPTS.output_path + self.s.name + ".html"
+         debug.print_raw("Datasheet: Writing to {0}".format(dname))
+-        datasheet_gen.datasheet_write(dname)
++        try:
++            datasheet_gen.datasheet_write(dname)
++        except Exception as e:
++            debug.warning("Skipping datasheet: {}".format(e))
+         print_time("Datasheet", datetime.datetime.now(), start_time)
+ 
+         # Write a verilog model

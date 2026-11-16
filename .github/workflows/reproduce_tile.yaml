@@ -1,8 +1,10 @@
-# Rebuild the TT tile from build/config.yaml and check it against the signed-off try9 run.
+# Rebuild the TT tile from the OpenRAM config and check it against the signed-off try9 run (= `make check`).
 # Runs only on flow/* and sta/* branches (and by hand). Note: the repo's gds/docs workflows run on every push too;
 # disable them in the fork's Actions tab (they deploy GitHub Pages).
-#   tile     : LibreLane 3.0.14 (Nix, same binaries as try9) -> gate-level test -> tt_submission/
-#   compare  : metrics vs try9, KLayout XOR vs committed gds/, LEF diff  (flow/compare_try9.py)
+#   macro    : OpenRAM v1.2.50 (+ local patch) -> fix_implants.py -> LEF power columns   (flow/build_macro.sh)
+#   tile     : that macro -> LibreLane 3.0.14 (Nix, same binaries as try9) -> gate-level test -> tt_submission/
+#              -> local TT precheck (flow/precheck.sh)                                      (flow/build.sh)
+#   compare  : macro + tile vs committed files, metrics vs try9  (flow/compare_try9.py)
 #   precheck : TT's own precheck action, pinned to the tt-support-tools commit used for try9
 name: reproduce tile
 
@@ -19,9 +21,48 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  tile:
+  macro:
     runs-on: ubuntu-24.04
-    timeout-minutes: 120
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          df -h /
+
+      - name: Install Nix (OpenRAM's flake provides magic, netgen, ngspice, klayout)
+        uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cache OpenRAM's SKY130 PDK and SRAM cell library
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/OpenRAM/skywater-pdk
+            ~/OpenRAM/ciel
+            ~/OpenRAM/sky130A
+            ~/OpenRAM/sky130_fd_bd_sram
+            ~/OpenRAM/technology/sky130/*_lib
+          key: openram-pdk-2f7b3866-sky130-e8294524
+
+      - name: Build macro (flow/build_macro.sh)
+        run: flow/build_macro.sh ci
+
+      - name: Upload macro
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macro_ci
+          path: build/macro_runs/ci
+          retention-days: 14
+
+  tile:
+    needs: macro
+    runs-on: ubuntu-24.04
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
 
@@ -48,8 +89,27 @@ jobs:
           path: ~/.ciel
           key: ciel-sky130-8afc8346a57fe1ab7934ba5a6056ea8b43078e71
 
-      - name: Build tile (flow/build_tile.sh)
-        run: flow/build_tile.sh ci
+      - name: Get the macro built by the macro job
+        uses: actions/download-artifact@v4
+        with:
+          name: macro_ci
+          path: build/macro_runs/ci
+
+      - name: Install it into build/macro/ (what flow/build_macro.sh step 7 does)
+        run: |
+          for f in gds lef orig.lef v log py; do cp build/macro_runs/ci/tt_sram_8x32_wpr1.$f build/macro/; done
+          git status --short build/macro
+
+      - name: Build tile + local TT precheck (flow/build.sh, macro step done above)
+        run: SKIP_MACRO=1 flow/build.sh ci
+
+      - name: Upload local precheck reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: local_precheck_reports
+          path: build/precheck/tt/precheck/reports
+          if-no-files-found: ignore
 
       - name: Upload run directory
         if: always()
@@ -79,6 +139,10 @@ jobs:
         with:
           name: librelane_run_ci
           path: build/runs/ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: macro_ci
+          path: build/macro_runs/ci
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -87,7 +151,7 @@ jobs:
       - name: Compare with try9
         run: |
           set -o pipefail
-          python flow/compare_try9.py build/runs/ci | tee compare_try9.txt
+          python flow/compare_try9.py build/runs/ci build/macro_runs/ci | tee compare_try9.txt
       - name: Add comparison to the run summary
         if: always()
         run: |
