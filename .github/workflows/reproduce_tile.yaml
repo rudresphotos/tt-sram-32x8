@@ -1,0 +1,102 @@
+# Rebuild the TT tile from build/config.yaml and check it against the signed-off try9 run.
+# Runs only on flow/* and sta/* branches (and by hand). Note: the repo's gds/docs workflows run on every push too;
+# disable them in the fork's Actions tab (they deploy GitHub Pages).
+#   tile     : LibreLane 3.0.14 (Nix, same binaries as try9) -> gate-level test -> tt_submission/
+#   compare  : metrics vs try9, KLayout XOR vs committed gds/, LEF diff  (flow/compare_try9.py)
+#   precheck : TT's own precheck action, pinned to the tt-support-tools commit used for try9
+name: reproduce tile
+
+on:
+  push:
+    branches: ['flow/**', 'sta/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: reproduce-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tile:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Free disk space (runner has ~14 GB free; LibreLane + PDK need more)
+        run: |
+          df -h /
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          df -h /
+
+      - name: Install Nix with the LibreLane binary cache (settings from LibreLane's Nix install docs)
+        uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          extra_nix_config: |
+            extra-substituters = https://nix-cache.fossi-foundation.org
+            extra-trusted-public-keys = nix-cache.fossi-foundation.org:3+K59iFwXqKsL7BNu6Guy0v+uTlwsxYQxjspXzqLYQs=
+
+      - name: Install iverilog (gate-level test)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq iverilog && iverilog -V 2>&1 | head -1
+
+      - name: Cache the sky130 PDK (ciel)
+        uses: actions/cache@v4
+        with:
+          path: ~/.ciel
+          key: ciel-sky130-8afc8346a57fe1ab7934ba5a6056ea8b43078e71
+
+      - name: Build tile (flow/build_tile.sh)
+        run: flow/build_tile.sh ci
+
+      - name: Upload run directory
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: librelane_run_ci
+          path: build/runs/ci
+          retention-days: 14
+
+      # Same paths as TT's custom_gds action, so TT's precheck action finds tt_submission/ where it expects it.
+      - name: Upload tt_submission
+        uses: actions/upload-artifact@v4
+        with:
+          name: tt_submission
+          path: |
+            info.yaml
+            LICENSE
+            docs/*
+            tt_submission/*
+
+  compare:
+    needs: tile
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: librelane_run_ci
+          path: build/runs/ci
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install KLayout Python module (same version as the try9 precheck venv)
+        run: pip install klayout==0.30.13
+      - name: Compare with try9
+        run: |
+          set -o pipefail
+          python flow/compare_try9.py build/runs/ci | tee compare_try9.txt
+      - name: Add comparison to the run summary
+        if: always()
+        run: { echo '```'; cat compare_try9.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
+  precheck:
+    needs: tile
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Run Tiny Tapeout precheck (tt-support-tools pinned to the try9 commit)
+        uses: TinyTapeout/tt-gds-action/precheck@ttsky26e
+        with:
+          tools-ref: 9d13ff3e3e6202090740110438c6a10c1d62ca0f
