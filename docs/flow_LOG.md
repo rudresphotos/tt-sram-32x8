@@ -199,6 +199,30 @@ Why: D1 must start from the OpenRAM config, so I need the exact steps between Op
   together they give the same OpenRAM tree as the original diff (`git diff | shasum` identical:
   `dbd40866b424d5c1529e10abdac0675e45d3fe53`).
 
+### 18. D1 DONE: CI run 43942461304 (`22cb050`), the full chain from the OpenRAM config, all jobs `success`
+https://github.com/AaryanSharmaCodes/tt-sram-32x8/actions/runs/43942461304  (UTC: macro 19:44:45-19:48:02,
+tile 19:48:04-19:53:37, compare 19:53:39-19:54:00, TT precheck action 19:53:39-19:55:14)
+
+| Step | Result (copied from the job logs) |
+|---|---|
+| OpenRAM (macro job) | `DRC Errors tt_sram_8x32_wpr1 0`, `tt_sram_8x32_wpr1 LVS matches`, `SIZE 147.895 BY 180.99`, `MACRO OK` |
+| Macro vs committed `build/macro/` | `29 layers compared: XOR empty, labels equal`; `.lef`, `.orig.lef`, `.v` `byte-identical` |
+| LibreLane PDK | `PDK_ROOT = .../sky130/versions/8afc8346a57fe1ab7934ba5a6056ea8b43078e71` |
+| Gate-level test | `gate-level TT-pin test: 64 reads checked, 0 errors -> PASS` |
+| Local precheck (`flow/precheck.sh`) | `Precheck passed ... 🎉`, then `ALL STEPS OK (run tag ci)` |
+| Sign-off metrics | all 11 = 0 (DRC, overlap, LVS, route DRC, antenna nets/pins, power grid, slew/fanout/cap, flow errors) |
+| All try9 metrics | `298/298 metrics identical` |
+| Tile GDS | `39 layers compared: XOR empty, labels equal` |
+| Tile LEF | `identical` |
+| TT precheck action (tt-support-tools `HEAD is now at 9d13ff3`) | `Precheck passed ... 🎉` |
+
+Also checked: the macro netlist from CI vs Rudr's try9 `tt_sram_8x32_wpr1.sp`: not byte-equal, but the same 64
+subcircuits with identical text (only the order in the file differs); both files are 91829 bytes.
+Fix needed on the way: on a CI cache hit the OpenRAM checkout refused to overwrite tracked cell files restored
+from the cache -> `git checkout -f`.
+
+**One command:** `make tile` (= `flow/build.sh`), or `make check` to also compare with try9.
+
 ## Open items
 - Contributor: revoke and re-create the GitHub CLI token. It was printed once in Claude's tool output on
   2026-11-16 during a credential check (GitHub -> Settings -> Applications -> Authorized OAuth Apps ->
