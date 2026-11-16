@@ -8,7 +8,8 @@
 # docs/timing_signoff.md.
 #
 # usage: flow/sta.sh [RUN_TAG]     needs build/runs/RUN_TAG (flow/build_tile.sh) and .lib files in LIB_DIR
-# env:   LIB_DIR    (default build/macro/lib) with tt_sram_8x32_wpr1_{TT_1p8V_25C,SS_1p6V_100C,FF_1p95V_-40C}.lib
+# env:   OUT_NAME   output folder name under build/sta/ (default RUN_TAG)
+#        LIB_DIR    (default build/macro/lib) with tt_sram_8x32_wpr1_{TT_1p8V_25C,SS_1p6V_100C,FF_1p95V_-40C}.lib
 #        CIEL_ROOT, LIBRELANE as in flow/build_tile.sh
 # output: build/sta/RUN_TAG/ (LibreLane STA reports + sta_summary.md)
 set -euo pipefail
@@ -18,12 +19,13 @@ LIB_DIR="$(cd "${LIB_DIR:-$ROOT/build/macro/lib}" && pwd)"
 CIEL_ROOT="${CIEL_ROOT:-$HOME/.ciel}"
 LIBRELANE="${LIBRELANE:-nix run github:librelane/librelane/3.0.14 --}"
 RUN="$ROOT/build/runs/$TAG"
-OUT="$ROOT/build/sta/$TAG"
+OUT="$ROOT/build/sta/${OUT_NAME:-$TAG}"
 FLOWPY="$ROOT/.venv-flow/bin/python3"
 step() { echo; echo "=== [$(date -u +%H:%M:%S)] $* ==="; }
 fail() { echo; echo "STA FAILED at step: $*" >&2; exit 1; }
 
 [ -s "$RUN/final/metrics.json" ] || fail "no finished tile run in $RUN (run flow/build_tile.sh $TAG first)"
+[ -x "$FLOWPY" ] || python3 -m venv "$ROOT/.venv-flow" || fail "python venv"
 "$FLOWPY" -c "import yaml" 2>/dev/null || "$ROOT/.venv-flow/bin/pip" install -q pyyaml || fail "pip install pyyaml"
 
 step "1/3 STA config: build/config.yaml + macro .lib per corner (from $LIB_DIR)"
