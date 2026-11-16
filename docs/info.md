@@ -13,7 +13,8 @@ Inputs are captured on the rising edge of `clk`:
 - `uio[7:0]` data in (all eight are inputs)
 - `uo[7:0]` data out
 
-A write stores `uio[7:0]` at the address. A read puts the stored byte on `uo[7:0]` after the clock edge.
+A write stores `uio[7:0]` at the address. A read puts the stored byte on `uo[7:0]` during the clock-low half
+after the rising edge that starts the read; read it while `clk` is low, before the next rising edge.
 
 ## How to test
 

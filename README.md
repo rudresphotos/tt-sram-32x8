@@ -43,6 +43,9 @@ For specifications and instructions, see the [analog specs page](https://tinytap
   then `tools/fix_implants.py` (implant gap fill for the KLayout FEOL rules); macro LVS re-checked after the fix.
 - `build/config.yaml`: LibreLane 3.0.14 run that places the SRAM in the 1x2 tile and routes it to the TT pins.
 - `build/pdn/pdn_cfg.tcl`: power grid = two full-height met4 stripes (VGND, VPWR) that drop via3 onto the SRAM power ring.
+- `build/openram_cells/`: fixed OpenRAM dummy cell `sky130_custom_dummy` (17 Nov 2026). The stock cell has two
+  floating transistor gates and sits on every bitline through the replica wordline; one li1 rectangle ties those
+  gates to ground. See `build/openram_cells/README.md`.
 
 ## Credits
 
