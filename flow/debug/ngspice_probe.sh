@@ -5,13 +5,15 @@ set -uo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 OR="${OPENRAM_DIR:-$HOME/OpenRAM}"
 SETUP_ONLY=1 "$ROOT/flow/build_macro.sh" >/dev/null || { echo "setup failed"; exit 1; }
+export OPENRAM_HOME="$OR/compiler" OPENRAM_TECH="$OR/technology" PDK_ROOT="$OR"
 M="$OR/sky130A/libs.tech/ngspice"
 echo "== PDK: $(readlink -f "$OR/sky130A")"
 echo "== scale / option lines in the ngspice model tree"
 grep -rn -i "option.*scale\|^\s*\.option" "$M"/sky130.lib.spice "$M"/corners/tt.spice "$M"/all.spice 2>/dev/null | head -20
 grep -rln -i "scale" "$M" 2>/dev/null | head -10
-F=$(grep -rl "sky130_fd_pr__nfet_01v8__model.0 " "$M" 2>/dev/null | head -1); echo "== bin file: $F"
-[ -n "$F" ] && grep -n -A12 "sky130_fd_pr__nfet_01v8__model.0 " "$F" | grep -i "lmin\|lmax\|wmin\|wmax" | head
+F=$(grep -rl "nfet_01v8__model\.0 " "$M" "$OR/sky130A/libs.ref/sky130_fd_pr/spice" 2>/dev/null | head -3); echo "== bin files: $F"
+for f in $F; do grep -n -A25 "nfet_01v8__model\.0 " "$f" | grep -i -m6 "lmin\|lmax\|wmin\|wmax"; done
+echo "== all.spice head"; head -5 "$M/all.spice"
 grep -n -i "subckt sky130_fd_pr__nfet_01v8 \|\.param" "$(grep -rl 'subckt sky130_fd_pr__nfet_01v8 ' "$M" | head -1)" | head -5
 W=$(mktemp -d)
 deck() {  # $1 = name, $2 = W/L spec, $3 = extra option line
