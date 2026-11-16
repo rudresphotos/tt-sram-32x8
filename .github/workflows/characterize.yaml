@@ -1,10 +1,12 @@
 # D2: Liberty files of the SRAM macro from ngspice characterization (OpenRAM sram_char.py), one job per corner.
-# Started by hand (it takes hours): Actions -> characterize macro -> Run workflow.
+# Takes hours, so it runs only on pushes to char/* branches (or by hand once this file is on the default branch).
 #   each job: rebuild the macro (flow/build_macro.sh, INSTALL=0) to get OpenRAM's netlist, then
 #             flow/characterize.sh <corner> on it, then flow/lib_sanity.py.
 name: characterize macro
 
 on:
+  push:
+    branches: ['char/**']
   workflow_dispatch:
     inputs:
       corners:
@@ -19,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        corner: ${{ fromJSON(inputs.corners) }}
+        corner: ${{ fromJSON(inputs.corners || '["TT","SS","FF"]') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 355
     steps:
