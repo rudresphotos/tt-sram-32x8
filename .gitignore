@@ -9,3 +9,10 @@ test/sim_build
 test/__pycache__/
 test/results.xml
 test/gate_level_netlist.v
+test/tb_gl.vvp
+.venv-flow/
+build/macro_runs/
+build/precheck/
+build/config_sta.yaml
+build/sta/
+build/char/

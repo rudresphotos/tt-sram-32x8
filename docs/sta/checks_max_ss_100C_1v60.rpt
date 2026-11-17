@@ -1,0 +1,118 @@
+
+===========================================================================
+report_checks -unconstrained
+===========================================================================
+======================= max_ss_100C_1v60 Corner ===================================
+
+Startpoint: mem (falling edge-triggered flip-flop clocked by clk)
+Endpoint: uo_out[6] (output port clocked by clk)
+Path Group: clk
+Path Type: max
+
+Fanout         Cap        Slew       Delay        Time   Description
+---------------------------------------------------------------------------------------------
+                                 20.000000   20.000000   clock clk (fall edge)
+                                  0.000000   20.000000   clock source latency
+     1    0.067693    0.290212    0.224013   20.224012 v clk (in)
+                                                         clk (net)
+                      0.387828    0.000000   20.224012 v mem/clk0 (tt_sram_8x32_wpr1)
+     1    0.082469    0.912548    4.598835   24.822849 ^ mem/dout0[6] (tt_sram_8x32_wpr1)
+                                                         uo_out[6] (net)
+                      0.684411    0.014753   24.837601 ^ uo_out[6] (out)
+                                             24.837601   data arrival time
+
+                                 40.000000   40.000000   clock clk (rise edge)
+                                  0.000000   40.000000   clock network delay (propagated)
+                                 -0.250000   39.750000   clock uncertainty
+                                  0.000000   39.750000   clock reconvergence pessimism
+                                 -8.000000   31.750000   output external delay
+                                             31.750000   data required time
+---------------------------------------------------------------------------------------------
+                                             31.750000   data required time
+                                            -24.837601   data arrival time
+---------------------------------------------------------------------------------------------
+                                              6.912398   slack (MET)
+
+
+
+
+===========================================================================
+report_checks --slack_max -0.01
+============================================================================
+======================= max_ss_100C_1v60 Corner ===================================
+
+No paths found.
+
+
+===========================================================================
+ report_check_types -max_slew -max_cap -max_fanout -violators
+============================================================================
+======================= max_ss_100C_1v60 Corner ===================================
+
+max slew
+
+Pin                                        Limit        Slew       Slack
+------------------------------------------------------------------------
+mem/dout0[6]                            0.500000    0.912548   -0.412548 (VIOLATED)
+mem/dout0[2]                            0.500000    0.907183   -0.407183 (VIOLATED)
+mem/dout0[4]                            0.500000    0.905346   -0.405346 (VIOLATED)
+mem/dout0[3]                            0.500000    0.904206   -0.404206 (VIOLATED)
+mem/dout0[5]                            0.500000    0.896277   -0.396277 (VIOLATED)
+mem/dout0[1]                            0.500000    0.882729   -0.382729 (VIOLATED)
+mem/dout0[7]                            0.500000    0.880405   -0.380405 (VIOLATED)
+mem/dout0[0]                            0.500000    0.789219   -0.289219 (VIOLATED)
+mem/din0[8]                             0.750000    0.844180   -0.094180 (VIOLATED)
+mem/spare_wen0                          0.750000    0.844179   -0.094179 (VIOLATED)
+mem/addr0[5]                            0.750000    0.843557   -0.093557 (VIOLATED)
+mem/din0[1]                             0.750000    0.756024   -0.006024 (VIOLATED)
+mem/din0[0]                             0.750000    0.752861   -0.002861 (VIOLATED)
+
+max capacitance
+
+Pin                                        Limit         Cap       Slack
+------------------------------------------------------------------------
+mem/dout0[6]                            0.055120    0.082469   -0.027349 (VIOLATED)
+mem/dout0[2]                            0.055120    0.081934   -0.026814 (VIOLATED)
+mem/dout0[4]                            0.055120    0.081751   -0.026631 (VIOLATED)
+mem/dout0[3]                            0.055120    0.081638   -0.026518 (VIOLATED)
+mem/dout0[5]                            0.055120    0.080848   -0.025728 (VIOLATED)
+mem/dout0[1]                            0.055120    0.079499   -0.024379 (VIOLATED)
+mem/dout0[7]                            0.055120    0.079267   -0.024147 (VIOLATED)
+mem/dout0[0]                            0.055120    0.070184   -0.015064 (VIOLATED)
+
+
+
+===========================================================================
+report_parasitic_annotation -report_unannotated
+============================================================================
+Found 19 unannotated drivers.
+ ena
+ rst_n
+ mem/dout0[8]
+ tt_um_rudresphotos_sram/HI
+ tt_um_rudresphotos_sram_1/HI
+ tt_um_rudresphotos_sram_10/HI
+ tt_um_rudresphotos_sram_11/HI
+ tt_um_rudresphotos_sram_12/HI
+ tt_um_rudresphotos_sram_13/HI
+ tt_um_rudresphotos_sram_14/HI
+ tt_um_rudresphotos_sram_15/HI
+ tt_um_rudresphotos_sram_2/HI
+ tt_um_rudresphotos_sram_3/HI
+ tt_um_rudresphotos_sram_4/HI
+ tt_um_rudresphotos_sram_5/HI
+ tt_um_rudresphotos_sram_6/HI
+ tt_um_rudresphotos_sram_7/HI
+ tt_um_rudresphotos_sram_8/HI
+ tt_um_rudresphotos_sram_9/HI
+Found 0 partially unannotated drivers.
+
+===========================================================================
+max slew violation count 13
+max fanout violation count 0
+max cap violation count 8
+============================================================================
+
+===========================================================================
+check_setup -verbose -unconstrained_endpoints -multiple_clock -no_clock -no_input_delay -loops -generated_clocks
+===========================================================================

@@ -1,0 +1,183 @@
+# Rebuild the TT tile from the OpenRAM config and check it against the signed-off try9 run (= `make check`).
+# Runs only on flow/* and sta/* branches (and by hand). Note: the repo's gds/docs workflows run on every push too;
+# disable them in the fork's Actions tab (they deploy GitHub Pages).
+#   macro    : OpenRAM v1.2.50 (+ local patch) -> fix_implants.py -> LEF power columns   (flow/build_macro.sh)
+#   tile     : that macro -> LibreLane 3.0.14 (Nix, same binaries as try9) -> gate-level test -> tt_submission/
+#              -> local TT precheck (flow/precheck.sh)                                      (flow/build.sh)
+#   compare  : macro + tile vs committed files, metrics vs try9  (flow/compare_try9.py)
+#   precheck : TT's own precheck action, pinned to the tt-support-tools commit used for try9
+name: reproduce tile
+
+on:
+  push:
+    branches: ['flow/**', 'sta/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: reproduce-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  macro:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          df -h /
+
+      - name: Install Nix (OpenRAM's flake provides magic, netgen, ngspice, klayout)
+        uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cache OpenRAM's SKY130 PDK and SRAM cell library
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/OpenRAM/skywater-pdk
+            ~/OpenRAM/ciel
+            ~/OpenRAM/sky130A
+            ~/OpenRAM/sky130_fd_bd_sram
+            ~/OpenRAM/technology/sky130/*_lib
+          key: openram-pdk-2f7b3866-sky130-e8294524
+
+      - name: Build macro (flow/build_macro.sh)
+        run: flow/build_macro.sh ci
+
+      - name: Upload macro
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macro_ci
+          path: build/macro_runs/ci
+          retention-days: 14
+
+  tile:
+    needs: macro
+    runs-on: ubuntu-24.04
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Free disk space (runner has ~14 GB free; LibreLane + PDK need more)
+        run: |
+          df -h /
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          df -h /
+
+      - name: Install Nix with the LibreLane binary cache (settings from LibreLane's Nix install docs)
+        uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          extra_nix_config: |
+            extra-substituters = https://nix-cache.fossi-foundation.org
+            extra-trusted-public-keys = nix-cache.fossi-foundation.org:3+K59iFwXqKsL7BNu6Guy0v+uTlwsxYQxjspXzqLYQs=
+
+      - name: Install iverilog (gate-level test)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq iverilog && iverilog -V 2>&1 | head -1
+
+      - name: Cache the sky130 PDK (ciel)
+        uses: actions/cache@v4
+        with:
+          path: ~/.ciel
+          key: ciel-sky130-8afc8346a57fe1ab7934ba5a6056ea8b43078e71
+
+      - name: Get the macro built by the macro job
+        uses: actions/download-artifact@v4
+        with:
+          name: macro_ci
+          path: build/macro_runs/ci
+
+      - name: Install it into build/macro/ (what flow/build_macro.sh step 7 does)
+        run: |
+          for f in gds lef orig.lef v log py; do cp build/macro_runs/ci/tt_sram_8x32_wpr1.$f build/macro/; done
+          git status --short build/macro
+
+      - name: Build tile + local TT precheck (flow/build.sh, macro step done above)
+        run: SKIP_MACRO=1 flow/build.sh ci
+
+      - name: Upload local precheck reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: local_precheck_reports
+          path: build/precheck/tt/precheck/reports
+          if-no-files-found: ignore
+
+      - name: Upload run directory
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: librelane_run_ci
+          path: build/runs/ci
+          retention-days: 14
+
+      # STA runs AFTER the run directory is uploaded: re-running LibreLane's STA step rewrites final/metrics.json
+      # with the macro-aware timing, and the try9 comparison must see the D1 run as built.
+      # Sign-off STA (D3) with the ngspice .lib files committed in build/macro/lib/ (made by characterize.yaml).
+      # (OpenRAM's analytical .lib cannot stand in: the macro build writes it empty, see docs/flow_LOG.md.)
+      - name: STA with the macro .lib (flow/sta.sh)
+        run: |
+          if ls build/macro/lib/*.lib >/dev/null 2>&1; then flow/sta.sh ci; else echo "no build/macro/lib/*.lib yet: STA skipped"; fi
+
+      - name: Upload STA reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sta_ci
+          path: build/sta
+          if-no-files-found: ignore
+
+      # Same paths as TT's custom_gds action, so TT's precheck action finds tt_submission/ where it expects it.
+      - name: Upload tt_submission
+        uses: actions/upload-artifact@v4
+        with:
+          name: tt_submission
+          path: |
+            info.yaml
+            LICENSE
+            docs/*
+            tt_submission/*
+
+  compare:
+    needs: tile
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: librelane_run_ci
+          path: build/runs/ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: macro_ci
+          path: build/macro_runs/ci
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install KLayout Python module (same version as the try9 precheck venv)
+        run: pip install klayout==0.30.13
+      - name: Compare with try9
+        run: |
+          set -o pipefail
+          python flow/compare_try9.py build/runs/ci build/macro_runs/ci | tee compare_try9.txt
+      - name: Add comparison to the run summary
+        if: always()
+        run: |
+          { echo '```'; cat compare_try9.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
+  precheck:
+    needs: tile
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Run Tiny Tapeout precheck (tt-support-tools pinned to the try9 commit)
+        uses: TinyTapeout/tt-gds-action/precheck@ttsky26e
+        with:
+          tools-ref: 9d13ff3e3e6202090740110438c6a10c1d62ca0f
