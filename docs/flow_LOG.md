@@ -265,6 +265,15 @@ Check (12-minute tripwire, `flow/debug/char_tripwire.sh`, run on branch probe/ng
   reads them from the macro LEF `SIZE 147.895 BY 180.99` (OpenRAM's LEF of the same macro).
 - Relaunched as `de44026` at 04:31 UTC.
 
+### 22. D2: last OpenRAM script bug
+- Run 44017736005 (`de44026`): all three corners finished the SRAM delay, setup/hold and .lib writing
+  (`macro size from .../tt_sram_8x32_wpr1.lef: 147.895 x 180.99 um`), then `sram_char.py` line 76 failed:
+  `NameError: name 'print_time' is not defined` (OpenRAM bug: should be `openram.print_time`). My script stopped
+  before copying the .lib out, so the results were lost (jobs 04:31 -> 05:41 TT, 05:47 FF, 06:16 SS UTC).
+- Fixes: the print_time call is added to the sram_char.py patch (now `openram_sram_char_fixes.diff`), and
+  characterize.sh now keeps OpenRAM's output folder and checks the .lib even if sram_char.py exits non-zero.
+- (The Mac lost DNS for ~1.5 h during this run; CI was not affected.) Relaunched `6780eb7` at 06:51 UTC.
+
 ## Open items
 - Contributor: revoke and re-create the GitHub CLI token. It was printed once in Claude's tool output on
   2026-11-16 during a credential check (GitHub -> Settings -> Applications -> Authorized OAuth Apps ->
