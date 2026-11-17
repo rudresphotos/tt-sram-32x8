@@ -157,6 +157,9 @@ make lib         # D2: ngspice .lib at TT/SS/FF into build/macro/lib/ (about 1.5
 make sta         # D3: LibreLane sign-off STA with the macro .lib -> build/sta/repro/sta_summary.md
 ```
 
+Evidence run with everything together: https://github.com/AaryanSharmaCodes/tt-sram-32x8/actions/runs/44050957597
+(macro, tile, try9 compare, TT precheck, STA all `success`).
+
 In CI (free GitHub runners): `reproduce tile` (every push to `flow/*`: macro, tile, try9 compare, both prechecks,
 STA with the committed .lib) and `characterize macro` (pushes to `char/*`: the three corners in parallel).
 

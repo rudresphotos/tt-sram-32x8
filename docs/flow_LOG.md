@@ -295,7 +295,22 @@ Check (12-minute tripwire, `flow/debug/char_tripwire.sh`, run on branch probe/ng
   `final/metrics.json` before the run directory was uploaded (diffs only in timing/power/slew/cap metrics; macro
   XOR/LEF/V checks passed). Fixed by moving the STA step after the upload in the workflow.
 
+### 25. Final full CI run 44050957597 (`aa69c8e`): D1 + D3 together, all jobs `success`
+https://github.com/AaryanSharmaCodes/tt-sram-32x8/actions/runs/44050957597
+macro, tile, compare, TT precheck action: all `success`. Compare: `298/298 metrics identical`, PASS for macro,
+sign-off metrics, metrics == try9, GDS XOR, LEF. Tile job: `64 reads checked, 0 errors -> PASS`,
+`ALL STEPS OK (run tag ci)`, then STA: `macro black-boxed in sta.log: no`, `overall timing__setup__ws =
+6.8884295772748`, `overall timing__hold__ws = 7.550809968781638`. TT precheck action: `Precheck passed`.
+(The many "black-boxed" warnings in the tile log are LibreLane's usual ones for fill/tap cells, which have no
+timing; they were in try9 too.)
+
 ## Open items
+- D4 needs the FINAL macro (Rudr's write-timing fix + new sense amp). When it is in `flow/openram/` / the OpenRAM
+  config: `make tile` (or push to flow/*), push to a `char/*` branch for the .lib, commit the .lib, then the
+  reproduce run does the STA; update docs/timing_signoff.md sections 2, 5, 6.
+- Optional, before D4: widen the characterized load range (`load_scales` up to 16) so the dout max-cap/slew
+  violations and the extrapolated clk->dout go away.
+- Branches to tidy in the fork when done: char/hedge-2x2, char/fast, probe/ngspice (debug only).
 - Contributor: revoke and re-create the GitHub CLI token. It was printed once in Claude's tool output on
   2026-11-16 during a credential check (GitHub -> Settings -> Applications -> Authorized OAuth Apps ->
   GitHub CLI -> Revoke, then log in again).
