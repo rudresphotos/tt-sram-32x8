@@ -256,6 +256,15 @@ Check (12-minute tripwire, `flow/debug/char_tripwire.sh`, run on branch probe/ng
   the SRAM delay decks keep the 10 ps max step).
 - Relaunched as `9c64682` on char/d2-libs at 02:44 UTC.
 
+### 21. D2: setup/hold fixed; .lib writer needed the macro size
+- Run 44005116883 (`9c64682`): all three corners passed the SRAM delay part again (same `Min Period Found`
+  values as entry 20) and the DFF setup/hold part, then stopped while writing the .lib header:
+  `self.lib.write("    area : {};..." .format(self.sram.width * self.sram.height))` ->
+  `AttributeError: 'fake_sram' object has no attribute 'width'` (the stand-alone characterizer has no layout).
+- Fix: `flow/openram/openram_memchar_area.diff` (sram_char.py sets width/height from the config); characterize.sh
+  reads them from the macro LEF `SIZE 147.895 BY 180.99` (OpenRAM's LEF of the same macro).
+- Relaunched as `de44026` at 04:31 UTC.
+
 ## Open items
 - Contributor: revoke and re-create the GitHub CLI token. It was printed once in Claude's tool output on
   2026-11-16 during a credential check (GitHub -> Settings -> Applications -> Authorized OAuth Apps ->
