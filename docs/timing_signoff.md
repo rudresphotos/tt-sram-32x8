@@ -47,7 +47,18 @@ unchanged in this flow):
 
 ## 4. STA set-up (D3)
 
-__D3SETUP__
+- Tool: LibreLane 3.0.14's own sign-off STA step `OpenROAD.STAPostPNR` (OpenSTA), re-run by `flow/sta.sh` on the
+  finished tile run. Nothing is re-placed or re-routed, so the timed layout is the D1 layout (= try9).
+- Corners: LibreLane's 9 STA corners = {nom, min, max} parasitics x {tt_025C_1v80, ss_100C_1v60, ff_n40C_1v95}.
+  Standard cells: `sky130_fd_sc_hd` .lib of that corner. Wires: the run's extracted SPEF for that corner.
+  Macro: the D2 .lib of the matching PVT corner (`MACROS.tt_sram_8x32_wpr1.lib` in `build/config_sta.yaml`).
+- Changed against try9's STA: (1) the macro now has a .lib per corner; (2) `STA_MACRO_PRIORITIZE_NL: false`, so
+  LibreLane uses that .lib for the macro rather than looking for a gate-level netlist of it. In try9 the macro had
+  no .lib (`MACROS ... "lib": {}` in try9 `resolved.json`) and OpenSTA logged
+  `module tt_sram_8x32_wpr1 not found. Creating black box for mem.` (try9 `55-openroad-stapostpnr/sta.log`).
+  A black box has no timing arcs, so every path ended at the macro unconstrained. That is why try9's summary shows
+  setup/hold worst slack `1000000…` (= "no constrained path"), not a real pass.
+- Constraints: section 3 (LibreLane `base.sdc`), unchanged.
 
 ## 5. Results per corner
 

@@ -19,3 +19,8 @@ load_scales = [0.5, 2, 8]        # x dff_in_cap 6.89 fF  -> 3.445, 13.78, 55.12 
 output_path = "char/{}/".format(os.environ.get("CHAR_CORNER", "TT"))
 # sky130_custom_cell storage nets (see its subckt in the macro .sp); read by flow/openram/openram_memchar_storage_names.diff
 memchar_storage_names = ("Q", "Qbar")
+# s_en is a PORT of the bank subcircuit, so ngspice knows it only by the SRAM top-level net name s_en0
+# (OpenRAM's default "X{name}.xbank0.s_en" points inside the bank and the s_en measurement fails).
+sen_format = "X{name}{hier_sep}s_en"
+# characterize.sh already runs OpenRAM inside the Nix shell; don't start a new `nix develop` for every ngspice call
+use_nix = False
