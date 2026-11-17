@@ -5,7 +5,7 @@ report_checks -unconstrained
 ======================= nom_tt_025C_1v80 Corner ===================================
 
 Startpoint: mem (falling edge-triggered flip-flop clocked by clk)
-Endpoint: uo_out[6] (output port clocked by clk)
+Endpoint: uo_out[1] (output port clocked by clk)
 Path Group: clk
 Path Type: max
 
@@ -16,10 +16,10 @@ Fanout         Cap        Slew       Delay        Time   Description
      1    0.063617    0.141667    0.111754   20.111755 v clk (in)
                                                          clk (net)
                       0.189935    0.000000   20.111755 v mem/clk0 (tt_sram_8x32_wpr1)
-     1    0.078888    0.441735    2.283461   22.395216 ^ mem/dout0[6] (tt_sram_8x32_wpr1)
-                                                         uo_out[6] (net)
-                      0.331301    0.011552   22.406767 ^ uo_out[6] (out)
-                                             22.406767   data arrival time
+     1    0.078600    0.398129    2.187365   22.299120 ^ mem/dout0[1] (tt_sram_8x32_wpr1)
+                                                         uo_out[1] (net)
+                      0.298597    0.003519   22.302639 ^ uo_out[1] (out)
+                                             22.302639   data arrival time
 
                                  40.000000   40.000000   clock clk (rise edge)
                                   0.000000   40.000000   clock network delay (propagated)
@@ -29,9 +29,9 @@ Fanout         Cap        Slew       Delay        Time   Description
                                              31.750000   data required time
 ---------------------------------------------------------------------------------------------
                                              31.750000   data required time
-                                            -22.406767   data arrival time
+                                            -22.302639   data arrival time
 ---------------------------------------------------------------------------------------------
-                                              9.343232   slack (MET)
+                                              9.447360   slack (MET)
 
 
 

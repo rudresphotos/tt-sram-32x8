@@ -318,15 +318,26 @@ timing; they were in try9 too.)
 - The committed .lib files (entry 23) and STA numbers (24, 25) are from the pre-fix macro. Re-characterization
   on the fixed macro started on fork branch `char/dummyfix` (run 44069523361).
 
+### 27. D2/D3 redone on the fixed macro: char run 44069523361, reproduce run 44085393839 (`8d80d60`)
+- Char run 44069523361 (`1f297cc`): TT/SS/FF `success`. The simulated netlist's `sky130_custom_dummy` has the two
+  gates on VGND (`X0 a_290_377# VGND VPWR VPWR ...`). `Characterization:` TT 4721.4 s, SS 5134.5 s, FF 5836.0 s;
+  `Min Period Found:` 4.21875 / 7.8125 / 2.578125 ns (same as entry 23). `flow/lib_sanity.py`: all `=> OK`.
+- clk->dout: TT 1.2730-2.0780, SS 2.1260-3.8800, FF 0.7520-1.2830 ns (was 1.2050-2.0720 / 2.0870-3.8770 /
+  0.7020-1.2760). Setup and hold ranges identical to entry 23 (the fix is in the bit array, not the input DFFs).
+  Last `s_en delay=`: TT 1.901227, SS 3.577061, FF 1.194248 ns.
+- Reproduce run 44085393839 (`8d80d60`, new .lib committed): macro, tile, compare, precheck `success`. STA:
+  `macro black-boxed in sta.log: no`, `overall timing__setup__ws = 6.912397960786699`, `overall timing__hold__ws =
+  7.550809968781638`, TNS 0, violation counts 0. DRVs unchanged: max cap 8 per corner (dout0 0.070184-0.082469 pF vs
+  0.05512), max slew 13 at max_ss (dout0 0.789219-0.912548 vs 0.5; din0[8]/spare_wen0/addr0[5]/din0[1]/din0[0]
+  0.752861-0.844180 vs 0.75). `docs/sta/` and docs/timing_signoff.md updated.
+
 ## Open items
-- Replace the .lib files with the `char/dummyfix` ones (run 44069523361) and update docs/timing_signoff.md
-  sections 2, 5, 6 with the new STA.
 - D4 needs the FINAL macro (Rudr's write-timing fix + new sense amp). When it is in `flow/openram/` / the OpenRAM
   config: `make tile` (or push to flow/*), push to a `char/*` branch for the .lib, commit the .lib, then the
   reproduce run does the STA; update docs/timing_signoff.md sections 2, 5, 6.
 - Optional, before D4: widen the characterized load range (`load_scales` up to 16) so the dout max-cap/slew
   violations and the extrapolated clk->dout go away.
-- Branches to tidy in the fork when done: char/hedge-2x2, char/fast, probe/ngspice (debug only).
+- Branches to tidy in the fork when done: char/hedge-2x2, char/fast, char/d2-libs, char/dummyfix, probe/ngspice (debug only).
 - Contributor: revoke and re-create the GitHub CLI token. It was printed once in Claude's tool output on
   2026-11-16 during a credential check (GitHub -> Settings -> Applications -> Authorized OAuth Apps ->
   GitHub CLI -> Revoke, then log in again).

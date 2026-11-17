@@ -8,17 +8,17 @@
 
 | corner | setup WS | setup TNS | setup vio | hold WS | hold TNS | hold vio | max slew vio | max cap vio |
 |---|---|---|---|---|---|---|---|---|
-| max_ff_n40C_1v95 | 10.196956456718675 | 0 | 0 | 7.63790829979442 | 0 | 0 | 0 | 8 |
-| max_ss_100C_1v60 | 6.8884295772748 | 0 | 0 | 7.550809968781638 | 0 | 0 | 13 | 8 |
-| max_tt_025C_1v80 | 9.295465993368193 | 0 | 0 | 7.599637578785591 | 0 | 0 | 0 | 8 |
-| min_ff_n40C_1v95 | 10.278812758550133 | 0 | 0 | 7.6576755992623236 | 0 | 0 | 0 | 8 |
-| min_ss_100C_1v60 | 7.114078416608759 | 0 | 0 | 7.590825960434537 | 0 | 0 | 11 | 8 |
-| min_tt_025C_1v80 | 9.398484034825922 | 0 | 0 | 7.624640690185706 | 0 | 0 | 0 | 8 |
-| nom_ff_n40C_1v95 | 10.235039772075648 | 0 | 0 | 7.64787277376685 | 0 | 0 | 0 | 8 |
-| nom_ss_100C_1v60 | 6.997270516616764 | 0 | 0 | 7.570920993307687 | 0 | 0 | 11 | 8 |
-| nom_tt_025C_1v80 | 9.343232230130587 | 0 | 0 | 7.61221507374268 | 0 | 0 | 0 | 8 |
+| max_ff_n40C_1v95 | 10.221219715474255 | 0 | 0 | 7.63790829979442 | 0 | 0 | 0 | 8 |
+| max_ss_100C_1v60 | 6.912397960786699 | 0 | 0 | 7.550809968781638 | 0 | 0 | 13 | 8 |
+| max_tt_025C_1v80 | 9.329802972044916 | 0 | 0 | 7.599637578785591 | 0 | 0 | 0 | 8 |
+| min_ff_n40C_1v95 | 10.296260135920168 | 0 | 0 | 7.6576755992623236 | 0 | 0 | 0 | 8 |
+| min_ss_100C_1v60 | 7.131291314869362 | 0 | 0 | 7.590825960434537 | 0 | 0 | 11 | 8 |
+| min_tt_025C_1v80 | 9.464360230078185 | 0 | 0 | 7.624640690185706 | 0 | 0 | 0 | 8 |
+| nom_ff_n40C_1v95 | 10.25530089875887 | 0 | 0 | 7.64787277376685 | 0 | 0 | 0 | 8 |
+| nom_ss_100C_1v60 | 7.017822965829888 | 0 | 0 | 7.570920993307687 | 0 | 0 | 11 | 8 |
+| nom_tt_025C_1v80 | 9.44736049464434 | 0 | 0 | 7.61221507374268 | 0 | 0 | 0 | 8 |
 
-- overall timing__setup__ws = 6.8884295772748
+- overall timing__setup__ws = 6.912397960786699
 - overall timing__setup__tns = 0
 - overall timing__hold__ws = 7.550809968781638
 - overall timing__hold__tns = 0
@@ -29,16 +29,16 @@
 
 | # | corner | slack (ns) | startpoint | endpoint |
 |---|---|---|---|---|
-| 1 | max_ss_100C_1v60 | 6.8884 MET | `mem (falling edge-triggered flip-flop clocked by clk)` | `uo_out[6] (output port clocked by clk)` |
-| 2 | max_ss_100C_1v60 | 6.9006 MET | `mem (falling edge-triggered flip-flop clocked by clk)` | `uo_out[2] (output port clocked by clk)` |
-| 3 | max_ss_100C_1v60 | 6.9052 MET | `mem (falling edge-triggered flip-flop clocked by clk)` | `uo_out[4] (output port clocked by clk)` |
-| 4 | max_ss_100C_1v60 | 6.9082 MET | `mem (falling edge-triggered flip-flop clocked by clk)` | `uo_out[3] (output port clocked by clk)` |
-| 5 | max_ss_100C_1v60 | 6.9275 MET | `mem (falling edge-triggered flip-flop clocked by clk)` | `uo_out[5] (output port clocked by clk)` |
-| 6 | max_ss_100C_1v60 | 6.9646 MET | `mem (falling edge-triggered flip-flop clocked by clk)` | `uo_out[7] (output port clocked by clk)` |
-| 7 | max_ss_100C_1v60 | 6.9696 MET | `mem (falling edge-triggered flip-flop clocked by clk)` | `uo_out[1] (output port clocked by clk)` |
-| 8 | nom_ss_100C_1v60 | 6.9973 MET | `mem (falling edge-triggered flip-flop clocked by clk)` | `uo_out[6] (output port clocked by clk)` |
-| 9 | nom_ss_100C_1v60 | 7.0026 MET | `mem (falling edge-triggered flip-flop clocked by clk)` | `uo_out[3] (output port clocked by clk)` |
-| 10 | nom_ss_100C_1v60 | 7.0079 MET | `mem (falling edge-triggered flip-flop clocked by clk)` | `uo_out[2] (output port clocked by clk)` |
+| 1 | max_ss_100C_1v60 | 6.9124 MET | `mem (falling edge-triggered flip-flop clocked by clk)` | `uo_out[6] (output port clocked by clk)` |
+| 2 | max_ss_100C_1v60 | 6.9241 MET | `mem (falling edge-triggered flip-flop clocked by clk)` | `uo_out[2] (output port clocked by clk)` |
+| 3 | max_ss_100C_1v60 | 6.9284 MET | `mem (falling edge-triggered flip-flop clocked by clk)` | `uo_out[4] (output port clocked by clk)` |
+| 4 | max_ss_100C_1v60 | 6.9313 MET | `mem (falling edge-triggered flip-flop clocked by clk)` | `uo_out[3] (output port clocked by clk)` |
+| 5 | max_ss_100C_1v60 | 6.9499 MET | `mem (falling edge-triggered flip-flop clocked by clk)` | `uo_out[5] (output port clocked by clk)` |
+| 6 | max_ss_100C_1v60 | 6.9855 MET | `mem (falling edge-triggered flip-flop clocked by clk)` | `uo_out[7] (output port clocked by clk)` |
+| 7 | max_ss_100C_1v60 | 6.9907 MET | `mem (falling edge-triggered flip-flop clocked by clk)` | `uo_out[1] (output port clocked by clk)` |
+| 8 | nom_ss_100C_1v60 | 7.0178 MET | `mem (falling edge-triggered flip-flop clocked by clk)` | `uo_out[6] (output port clocked by clk)` |
+| 9 | nom_ss_100C_1v60 | 7.0229 MET | `mem (falling edge-triggered flip-flop clocked by clk)` | `uo_out[3] (output port clocked by clk)` |
+| 10 | nom_ss_100C_1v60 | 7.0280 MET | `mem (falling edge-triggered flip-flop clocked by clk)` | `uo_out[2] (output port clocked by clk)` |
 
 Worst setup path in full (max_ss_100C_1v60):
 
@@ -55,10 +55,10 @@ Fanout         Cap        Slew       Delay        Time   Description
      1    0.067693    0.290212    0.224013   20.224012 v clk (in)
                                                          clk (net)
                       0.387828    0.000000   20.224012 v mem/clk0 (tt_sram_8x32_wpr1)
-     1    0.082469    0.912548    4.622804   24.846817 ^ mem/dout0[6] (tt_sram_8x32_wpr1)
+     1    0.082469    0.912548    4.598835   24.822849 ^ mem/dout0[6] (tt_sram_8x32_wpr1)
                                                          uo_out[6] (net)
-                      0.684411    0.014753   24.861570 ^ uo_out[6] (out)
-                                             24.861570   data arrival time
+                      0.684411    0.014753   24.837601 ^ uo_out[6] (out)
+                                             24.837601   data arrival time
 
                                  40.000000   40.000000   clock clk (rise edge)
                                   0.000000   40.000000   clock network delay (propagated)
@@ -68,9 +68,9 @@ Fanout         Cap        Slew       Delay        Time   Description
                                              31.750000   data required time
 ---------------------------------------------------------------------------------------------
                                              31.750000   data required time
-                                            -24.861570   data arrival time
+                                            -24.837601   data arrival time
 ---------------------------------------------------------------------------------------------
-                                              6.888430   slack (MET)
+                                              6.912398   slack (MET)
 ```
 
 ## 10 worst hold paths over all corners (234 reported paths)

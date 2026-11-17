@@ -1,12 +1,11 @@
 # Timing sign-off: tt_um_rudresphotos_sram (TT SKY130, 1x2 tile, TTSKY26e)
 
-Status: **Timing MET at all 9 corners (setup and hold) for the current macro** (the try9 macro, rebuilt in D1).
-Worst setup slack +6.888 ns, worst hold slack +7.551 ns. Not clean: 8 max-capacitance and up to 13 max-slew
+Status: **Timing MET at all 9 corners (setup and hold) for the current macro** (try9 macro + Rudr's dummy-cell fix
+`9f74ef5`, rebuilt in D1). Worst setup slack +6.912 ns, worst hold slack +7.551 ns. Not clean: 8 max-capacitance and up to 13 max-slew
 violations at the macro pins, all at the edge of the characterized .lib range (section 5, 8).
 This is the D4 report for the *current* macro; the final macro (write-timing fix + new sense amp) is not built yet,
 so D1-D3 must be re-run on it (section 7: three commands) and this file updated.
-Note (17 Nov): the .lib files and STA numbers below were made on the macro *before* Rudr's dummy-cell fix
-(`9f74ef5`); the D1 build now includes that fix (flow_LOG entry 26) and re-characterization on it is running.
+The .lib files and STA numbers below are for the macro *with* the dummy-cell fix (flow_LOG entries 26-27).
 
 Every number below is copied from a tool run; the run and the file are named next to it. Commands to redo all of
 it are in section 7.
@@ -31,15 +30,15 @@ Setup = data must arrive *before* the capturing clock edge minus the setup time 
 
 Made by `flow/characterize.sh` with OpenRAM v1.2.50's own characterizer (`sram_char.py`), **ngspice-45 transistor
 simulation, not the analytical model**, on OpenRAM's LVS-clean schematic netlist of the macro (same 64 subcircuits as
-Rudr's try9 `.sp`). CI run 44034295552 (`6780eb7`), one job per corner; OpenRAM reports `Characterization:` TT 6441.9 s, SS 5062.2 s, FF 5094.6 s.
+Rudr's try9 `.sp`). CI run 44069523361 (`1f297cc`), one job per corner; OpenRAM reports `Characterization:` TT 4721.4 s, SS 5134.5 s, FF 5836.0 s.
 Files: `build/macro/lib/tt_sram_8x32_wpr1_{TT_1p8V_25C,SS_1p6V_100C,FF_1p95V_-40C}.lib`, OpenRAM logs in
 `build/macro/lib/char_logs/`.
 
 | Corner (LibreLane name) | clk0 -> dout0 delay | setup (vs clk0 rise) | hold (vs clk0 rise) | min period (OpenRAM) | s_en after clk fall (one probe) |
 |---|---|---|---|---|---|
-| TT 1.80 V 25 C (`tt_025C_1v80`) | 1.205 - 2.072 ns | 0.090 - 0.505 ns | -0.300 - 0.481 ns | 4.219 ns | 1.902 ns |
-| SS 1.60 V 100 C (`ss_100C_1v60`) | 2.087 - 3.877 ns | 0.139 - 0.383 ns | -0.374 - -0.081 ns | 7.812 ns | 3.578 ns |
-| FF 1.95 V -40 C (`ff_n40C_1v95`) | 0.702 - 1.276 ns | 0.066 - 0.652 ns | -0.105 - 0.505 ns | 2.578 ns | 1.194 ns |
+| TT 1.80 V 25 C (`tt_025C_1v80`) | 1.273 - 2.078 ns | 0.090 - 0.505 ns | -0.300 - 0.481 ns | 4.219 ns | 1.901 ns |
+| SS 1.60 V 100 C (`ss_100C_1v60`) | 2.126 - 3.880 ns | 0.139 - 0.383 ns | -0.374 - -0.081 ns | 7.812 ns | 3.577 ns |
+| FF 1.95 V -40 C (`ff_n40C_1v95`) | 0.752 - 1.283 ns | 0.066 - 0.652 ns | -0.105 - 0.505 ns | 2.578 ns | 1.194 ns |
 
 (ranges = min..max over the 3x3 table; `flow/lib_sanity.py` output; s_en = last `s_en delay=` line of each char log.)
 
@@ -100,20 +99,20 @@ unchanged in this flow):
 
 ## 5. Results per corner
 
-From `docs/sta/sta_summary_ci.md` (CI run 44049111747, `d34a65f`, step `OpenROAD.STAPostPNR` re-run by
+From `docs/sta/sta_summary_ci.md` (CI run 44085393839, `8d80d60`, step `OpenROAD.STAPostPNR` re-run by
 `flow/sta.sh`; `sta.log`: macro **not** black-boxed). Slack in ns; positive = met.
 
 | corner | setup WS | setup TNS | hold WS | hold TNS | max slew vio | max cap vio |
 |---|---|---|---|---|---|---|
-| nom_tt_025C_1v80 | 9.343 | 0 | 7.612 | 0 | 0 | 8 |
-| min_tt_025C_1v80 | 9.398 | 0 | 7.625 | 0 | 0 | 8 |
-| max_tt_025C_1v80 | 9.295 | 0 | 7.600 | 0 | 0 | 8 |
-| nom_ss_100C_1v60 | 6.997 | 0 | 7.571 | 0 | 11 | 8 |
-| min_ss_100C_1v60 | 7.114 | 0 | 7.591 | 0 | 11 | 8 |
-| max_ss_100C_1v60 | **6.888** | 0 | **7.551** | 0 | 13 | 8 |
-| nom_ff_n40C_1v95 | 10.235 | 0 | 7.648 | 0 | 0 | 8 |
-| min_ff_n40C_1v95 | 10.279 | 0 | 7.658 | 0 | 0 | 8 |
-| max_ff_n40C_1v95 | 10.197 | 0 | 7.638 | 0 | 0 | 8 |
+| nom_tt_025C_1v80 | 9.447 | 0 | 7.612 | 0 | 0 | 8 |
+| min_tt_025C_1v80 | 9.464 | 0 | 7.625 | 0 | 0 | 8 |
+| max_tt_025C_1v80 | 9.330 | 0 | 7.600 | 0 | 0 | 8 |
+| nom_ss_100C_1v60 | 7.018 | 0 | 7.571 | 0 | 11 | 8 |
+| min_ss_100C_1v60 | 7.131 | 0 | 7.591 | 0 | 11 | 8 |
+| max_ss_100C_1v60 | **6.912** | 0 | **7.551** | 0 | 13 | 8 |
+| nom_ff_n40C_1v95 | 10.255 | 0 | 7.648 | 0 | 0 | 8 |
+| min_ff_n40C_1v95 | 10.296 | 0 | 7.658 | 0 | 0 | 8 |
+| max_ff_n40C_1v95 | 10.221 | 0 | 7.638 | 0 | 0 | 8 |
 
 Setup and hold: **met** at every corner, 0 violating paths (`timing__setup_vio__count = 0`,
 `timing__hold_vio__count = 0`).
@@ -136,11 +135,11 @@ Design-rule violations (`docs/sta/checks_*.rpt`), **not met, explained**:
 All 234 reported constrained paths are one of two kinds (`docs/sta/sta_summary_ci.md` lists the 10 worst of each):
 
 **Setup (worst 10 are all `mem` -> `uo_out[*]`, SS corner).** Worst: `max_ss_100C_1v60`, `mem/dout0[6]` ->
-`uo_out[6]`, slack +6.888 ns. In words: the read data is launched by the **falling** clock edge at 20 ns; the clock
-reaches `mem/clk0` at 20.224 ns; the macro's clk->dout at this corner and load is 4.623 ns (extrapolated, see above)
-so `uo_out[6]` is valid at 24.862 ns. TT's harness needs it 8 ns (output delay) before the next rising edge at 40 ns,
-minus 0.25 ns uncertainty = 31.750 ns. 31.750 - 24.862 = 6.888 ns to spare. The other 9 are the other `dout` bits at
-SS (6.900-7.008 ns); they differ only by routing.
+`uo_out[6]`, slack +6.912 ns. In words: the read data is launched by the **falling** clock edge at 20 ns; the clock
+reaches `mem/clk0` at 20.224 ns; the macro's clk->dout at this corner and load is 4.599 ns (extrapolated, see above)
+so `uo_out[6]` is valid at 24.838 ns. TT's harness needs it 8 ns (output delay) before the next rising edge at 40 ns,
+minus 0.25 ns uncertainty = 31.750 ns. 31.750 - 24.838 = 6.912 ns to spare. The next 6 are other `dout` bits at
+max_ss (6.924-6.991 ns); they differ only by routing.
 
 **Hold (worst 10 are all `ui_in[*]` -> `mem` address/data pins).** Worst: `max_ss_100C_1v60`, `ui_in[4]` ->
 `mem/addr0[4]`, slack +7.551 ns. In words: TT changes the inputs 8 ns after the rising edge (input delay), the
@@ -159,7 +158,7 @@ make lib         # D2: ngspice .lib at TT/SS/FF into build/macro/lib/ (about 1.5
 make sta         # D3: LibreLane sign-off STA with the macro .lib -> build/sta/repro/sta_summary.md
 ```
 
-Evidence run with everything together: https://github.com/AaryanSharmaCodes/tt-sram-32x8/actions/runs/44050957597
+Evidence run with everything together: https://github.com/AaryanSharmaCodes/tt-sram-32x8/actions/runs/44085393839
 (macro, tile, try9 compare, TT precheck, STA all `success`).
 
 In CI (free GitHub runners): `reproduce tile` (every push to `flow/*`: macro, tile, try9 compare, both prechecks,

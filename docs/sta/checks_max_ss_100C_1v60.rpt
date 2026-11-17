@@ -16,10 +16,10 @@ Fanout         Cap        Slew       Delay        Time   Description
      1    0.067693    0.290212    0.224013   20.224012 v clk (in)
                                                          clk (net)
                       0.387828    0.000000   20.224012 v mem/clk0 (tt_sram_8x32_wpr1)
-     1    0.082469    0.912548    4.622804   24.846817 ^ mem/dout0[6] (tt_sram_8x32_wpr1)
+     1    0.082469    0.912548    4.598835   24.822849 ^ mem/dout0[6] (tt_sram_8x32_wpr1)
                                                          uo_out[6] (net)
-                      0.684411    0.014753   24.861570 ^ uo_out[6] (out)
-                                             24.861570   data arrival time
+                      0.684411    0.014753   24.837601 ^ uo_out[6] (out)
+                                             24.837601   data arrival time
 
                                  40.000000   40.000000   clock clk (rise edge)
                                   0.000000   40.000000   clock network delay (propagated)
@@ -29,9 +29,9 @@ Fanout         Cap        Slew       Delay        Time   Description
                                              31.750000   data required time
 ---------------------------------------------------------------------------------------------
                                              31.750000   data required time
-                                            -24.861570   data arrival time
+                                            -24.837601   data arrival time
 ---------------------------------------------------------------------------------------------
-                                              6.888430   slack (MET)
+                                              6.912398   slack (MET)
 
 
 
