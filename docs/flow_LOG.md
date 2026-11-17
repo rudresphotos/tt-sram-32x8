@@ -223,6 +223,25 @@ from the cache -> `git checkout -f`.
 
 **One command:** `make tile` (= `flow/build.sh`), or `make check` to also compare with try9.
 
+### 19. D2: getting OpenRAM's ngspice characterization to run on this macro (night of 16-17 Nov)
+Each problem below was found in a CI log or ngspice output, and fixed in the flow, not in the circuit:
+1. ngspice `could not find a valid modelname` (OpenRAM temp `timing.lis`). The SKY130 model tree sets
+   `.option scale=1.0u` (`all.spice` line 2, printed by `flow/debug/ngspice_probe.sh`), so sizes must be unitless.
+   OpenRAM writes all transistors unitless except the 6 of `sky130_custom_nand3_dec` (`W=0.74u L=0.15u`).
+   Probe run: unitless deck runs; deck with `W=0.74u L=0.15u` gives exactly this error.
+   Fix: `flow/normalize_units.py` rewrites those 6 lines in the simulated copy (prints each line; fails unless 6).
+2. Then the bit checks passed but `s_en delay=Failedns` at every period (run 43942466120, TT log: periods 10, 20,
+   40, 80, 160 ns, `Spice: 196.1 / 344.4 / 642.2 / 1274.4 / 2468.0 seconds`; it hit GitHub's 6 h limit and was
+   cancelled). Cause: OpenRAM probes `Xtt_sram_8x32_wpr1.xbank0.s_en0`, but `s_en0` is a port of the bank
+   subcircuit, so ngspice knows the node only by the top-level net name `Xtt_sram_8x32_wpr1.s_en0`
+   (`Xbank0 ... s_en0 ...` / `Xcontrol0 ... s_en0 ...` in the top subcircuit). Fix: `sen_format` in the char config.
+3. `use_nix = False` in the char config: the script is already inside the Nix shell; OpenRAM otherwise starts a new
+   `nix develop` for every ngspice call.
+Check (12-minute tripwire, `flow/debug/char_tripwire.sh`, run on branch probe/ngspice): TT, period 10 ns:
+`v_q ... WRITE_ZERO=1.18403e-08`, `WRITE_ONE=1.8`, `READ_ZERO=2.674678e-08`, `READ_ONE=1.8`,
+`s_en delay=1.90187ns`, `delay_lh=2.072282`, `Found feasible_period: 10.0ns`, then `Successful period 5.0`.
+(Insurance runs char/hedge-2x2 and char/fast had problem 2 as well and were cancelled.)
+
 ## Open items
 - Contributor: revoke and re-create the GitHub CLI token. It was printed once in Claude's tool output on
   2026-11-16 during a credential check (GitHub -> Settings -> Applications -> Authorized OAuth Apps ->
