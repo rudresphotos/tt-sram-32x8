@@ -1,0 +1,48 @@
+diff --git a/compiler/characterizer/setup_hold.py b/compiler/characterizer/setup_hold.py
+index 9bb48f1..c59fe9f 100644
+--- a/compiler/characterizer/setup_hold.py
++++ b/compiler/characterizer/setup_hold.py
+@@ -67,7 +67,7 @@ class setup_hold():
+         self.write_measures(mode=mode,
+                             correct_value=correct_value)
+ 
+-        self.stim.write_control(4 * self.period)
++        self.stim.write_control(4 * self.period, tmax_ps=100)
+ 
+         self.sf.close()
+         self.mf.close()
+diff --git a/compiler/characterizer/stimuli.py b/compiler/characterizer/stimuli.py
+index c184ed6..df7cd66 100644
+--- a/compiler/characterizer/stimuli.py
++++ b/compiler/characterizer/stimuli.py
+@@ -227,7 +227,7 @@ class stimuli():
+         # measure_string=".meas tran {0} AVG v({1}) FROM={2}n TO={3}n\n\n".format(meas_name.lower(), dout, t_initial, t_final)
+         self.mf.write(measure_string)
+ 
+-    def write_control(self, end_time, runlvl=4):
++    def write_control(self, end_time, runlvl=4, tmax_ps=None):
+         """ Write the control cards to run and end the simulation """
+ 
+         # These are guesses...
+@@ -245,7 +245,9 @@ class stimuli():
+             self.sf.write(".TEMP {}\n".format(self.temperature))
+             # UIC is needed for ngspice to converge
+             # Format: .tran tstep tstop < tstart < tmax >>
+-            self.sf.write(".TRAN {0}p {1}n 0n {0}p UIC\n".format(timestep, end_time))
++            # tt-sram-32x8 flow: optional larger max step (ngspice-45 aborts the DFF setup/hold deck at TSTOP
++            # with "Timestep too small" when TMAX = 10p)
++            self.sf.write(".TRAN {0}p {1}n 0n {2}p UIC\n".format(timestep, end_time, tmax_ps or timestep))
+             # ngspice sometimes has convergence problems if not using gear method
+             # which is more accurate, but slower than the default trapezoid method
+             # Do not remove this or it may not converge due to some "pa_00" nodes
+@@ -272,7 +274,9 @@ class stimuli():
+         elif OPTS.spice_name in ["hspice", "xa"]:
+             self.sf.write(".TEMP {}\n".format(self.temperature))
+             # Format: .tran tstep tstop < tstart < tmax >>
+-            self.sf.write(".TRAN {0}p {1}n 0n {0}p UIC\n".format(timestep, end_time))
++            # tt-sram-32x8 flow: optional larger max step (ngspice-45 aborts the DFF setup/hold deck at TSTOP
++            # with "Timestep too small" when TMAX = 10p)
++            self.sf.write(".TRAN {0}p {1}n 0n {2}p UIC\n".format(timestep, end_time, tmax_ps or timestep))
+             self.sf.write(".OPTIONS POST=1 RUNLVL={0} PROBE\n".format(runlvl))
+             self.sf.write(".OPTIONS PSF=1 \n")
+             self.sf.write(".OPTIONS HIER_DELIM=1 \n")

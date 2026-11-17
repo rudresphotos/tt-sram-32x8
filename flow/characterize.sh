@@ -9,6 +9,8 @@
 # read from the config (sky130_custom_cell calls them Q / Qbar; OpenRAM hard-codes Q / Q_bar). No circuit change.
 # The netlist copy that is simulated has 6 transistor sizes rewritten from W=0.74u to W=0.74 (same size, the unit
 # convention of the rest of the netlist under the PDK's .option scale=1.0u), see flow/normalize_units.py.
+# Second characterizer-only patch (flow/openram/openram_setup_hold_tmax.diff): the DFF setup/hold decks use a
+# 100 ps max time step; with 10 ps ngspice-45 aborts them at the stop time ("Timestep too small").
 #
 # usage: flow/characterize.sh CORNER [SPICE_NETLIST]
 #   CORNER         TT (1.80 V 25 C) | SS (1.60 V 100 C) | FF (1.95 V -40 C)   = LibreLane's three corners
@@ -29,8 +31,9 @@ fail() { echo; echo "CHARACTERIZATION FAILED at step: $*" >&2; exit 1; }
 step "1/5 OpenRAM environment + characterizer patch"
 SETUP_ONLY=1 "$ROOT/flow/build_macro.sh" >/dev/null || fail "OpenRAM setup (run SETUP_ONLY=1 flow/build_macro.sh to see why)"
 export OPENRAM_HOME="$OR/compiler" OPENRAM_TECH="$OR/technology" PDK_ROOT="$OR" CHAR_CORNER="$CORNER"
-CPATCH="$ROOT/flow/openram/openram_memchar_storage_names.diff"
-git -C "$OR" apply --reverse --check "$CPATCH" 2>/dev/null || git -C "$OR" apply "$CPATCH" || fail "apply $CPATCH"
+for CPATCH in "$ROOT/flow/openram/openram_memchar_storage_names.diff" "$ROOT/flow/openram/openram_setup_hold_tmax.diff"; do
+  git -C "$OR" apply --reverse --check "$CPATCH" 2>/dev/null || git -C "$OR" apply "$CPATCH" || fail "apply $CPATCH"
+done
 git -C "$OR" diff --stat
 
 step "2/5 netlist units for ngspice (flow/normalize_units.py: 6 transistors of sky130_custom_nand3_dec)"
