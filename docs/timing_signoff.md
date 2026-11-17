@@ -5,6 +5,8 @@ Worst setup slack +6.888 ns, worst hold slack +7.551 ns. Not clean: 8 max-capaci
 violations at the macro pins, all at the edge of the characterized .lib range (section 5, 8).
 This is the D4 report for the *current* macro; the final macro (write-timing fix + new sense amp) is not built yet,
 so D1-D3 must be re-run on it (section 7: three commands) and this file updated.
+Note (17 Nov): the .lib files and STA numbers below were made on the macro *before* Rudr's dummy-cell fix
+(`9f74ef5`); the D1 build now includes that fix (flow_LOG entry 26) and re-characterization on it is running.
 
 Every number below is copied from a tool run; the run and the file are named next to it. Commands to redo all of
 it are in section 7.

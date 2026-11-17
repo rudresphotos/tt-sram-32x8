@@ -304,7 +304,23 @@ sign-off metrics, metrics == try9, GDS XOR, LEF. Tile job: `64 reads checked, 0 
 (The many "black-boxed" warnings in the tile log are LibreLane's usual ones for fill/tap cells, which have no
 timing; they were in try9 too.)
 
+### 26. Rebased on Rudr's dummy-cell fix (`9f74ef5`, 17 Nov), reproduce run 44069518951
+- Rudr's commit adds a fixed `sky130_custom_dummy` (`build/openram_cells/`, one li1 rectangle ties the floating
+  gates to VGND) and a new tile GDS. `flow/build_macro.sh` now copies the fixed .gds/.sp over OpenRAM's
+  `technology/sky130/{gds_lib,sp_lib}/` before generating, as `build/openram_cells/README.md` says.
+- Run 44069518951 (`1f297cc`): macro, tile, TT precheck action `success`; compare: `298/298 metrics identical`,
+  tile `XOR empty, labels equal` against Rudr's new `gds/tt_um_rudresphotos_sram.gds`, LEF identical.
+- Compare check 0 failed: `DIFF layer 67/20: 101 XOR polygons, area 10.216150 um^2` vs committed
+  `build/macro/tt_sram_8x32_wpr1.gds` (= 89 x the 0.205 x 0.56 um fix rectangle; LEF/.v byte-identical). The
+  commit updated the tile GDS but not `build/macro/*.gds`, which still has the stock dummy cell (no fix rectangle in
+  its `sky130_custom_dummy`; the tile's `RJ_sky130_custom_dummy` has it). Committed the CI-built macro GDS
+  (876632 -> 876696 bytes, the same +64 bytes as the tile).
+- The committed .lib files (entry 23) and STA numbers (24, 25) are from the pre-fix macro. Re-characterization
+  on the fixed macro started on fork branch `char/dummyfix` (run 44069523361).
+
 ## Open items
+- Replace the .lib files with the `char/dummyfix` ones (run 44069523361) and update docs/timing_signoff.md
+  sections 2, 5, 6 with the new STA.
 - D4 needs the FINAL macro (Rudr's write-timing fix + new sense amp). When it is in `flow/openram/` / the OpenRAM
   config: `make tile` (or push to flow/*), push to a `char/*` branch for the .lib, commit the .lib, then the
   reproduce run does the STA; update docs/timing_signoff.md sections 2, 5, 6.
