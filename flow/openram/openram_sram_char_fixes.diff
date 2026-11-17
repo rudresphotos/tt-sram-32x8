@@ -1,5 +1,5 @@
 diff --git a/sram_char.py b/sram_char.py
-index 0c9738b..ab14120 100755
+index 0c9738b..1402e2b 100755
 --- a/sram_char.py
 +++ b/sram_char.py
 @@ -56,6 +56,10 @@ debug.check(os.path.exists(args[1]), "Spice netlist file {} not found.".format(a
@@ -13,3 +13,12 @@ index 0c9738b..ab14120 100755
  
  OPTS.netlist_only = True
  OPTS.check_lvsdrc = False
+@@ -69,7 +73,7 @@ start_time = datetime.datetime.now()
+ from openram.characterizer import lib
+ debug.print_raw("LIB: Characterizing... ")
+ lib(out_dir=OPTS.output_path, sram=s, sp_file=sp_file, use_model=False)
+-print_time("Characterization", datetime.datetime.now(), start_time)
++openram.print_time("Characterization", datetime.datetime.now(), start_time)  # tt-sram-32x8 flow: was a NameError
+ 
+ # Output info about this run
+ print("Output files are:\n{0}*.lib".format(OPTS.output_path))

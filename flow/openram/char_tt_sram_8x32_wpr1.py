@@ -24,6 +24,6 @@ memchar_storage_names = ("Q", "Qbar")
 sen_format = "X{name}{hier_sep}s_en"
 # characterize.sh already runs OpenRAM inside the Nix shell; don't start a new `nix develop` for every ngspice call
 use_nix = False
-# macro size for the .lib area (set by characterize.sh from the macro LEF SIZE); read by openram_memchar_area.diff
+# macro size for the .lib area (set by characterize.sh from the macro LEF SIZE); read by openram_sram_char_fixes.diff
 memchar_width = float(os.environ.get("CHAR_MACRO_W", "0"))
 memchar_height = float(os.environ.get("CHAR_MACRO_H", "0"))

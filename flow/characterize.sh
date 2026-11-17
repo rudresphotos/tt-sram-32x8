@@ -11,8 +11,9 @@
 # convention of the rest of the netlist under the PDK's .option scale=1.0u), see flow/normalize_units.py.
 # Second characterizer-only patch (flow/openram/openram_setup_hold_tmax.diff): the DFF setup/hold decks use a
 # 100 ps max time step; with 10 ps ngspice-45 aborts them at the stop time ("Timestep too small").
-# Third (flow/openram/openram_memchar_area.diff): the stand-alone characterizer has no layout object, so the
-# macro width/height for the .lib area come from the macro LEF (CHAR_MACRO_W/H -> memchar_width/height).
+# Third (flow/openram/openram_sram_char_fixes.diff): the stand-alone characterizer has no layout object, so the
+# macro width/height for the .lib area come from the macro LEF (CHAR_MACRO_W/H -> memchar_width/height), and
+# sram_char.py's last line calls an undefined print_time (NameError after the .lib is written) -> openram.print_time.
 #
 # usage: flow/characterize.sh CORNER [SPICE_NETLIST]
 #   CORNER         TT (1.80 V 25 C) | SS (1.60 V 100 C) | FF (1.95 V -40 C)   = LibreLane's three corners
@@ -34,7 +35,7 @@ step "1/5 OpenRAM environment + characterizer patch"
 SETUP_ONLY=1 "$ROOT/flow/build_macro.sh" >/dev/null || fail "OpenRAM setup (run SETUP_ONLY=1 flow/build_macro.sh to see why)"
 export OPENRAM_HOME="$OR/compiler" OPENRAM_TECH="$OR/technology" PDK_ROOT="$OR" CHAR_CORNER="$CORNER"
 for CPATCH in "$ROOT/flow/openram/openram_memchar_storage_names.diff" "$ROOT/flow/openram/openram_setup_hold_tmax.diff" \
-              "$ROOT/flow/openram/openram_memchar_area.diff"; do
+              "$ROOT/flow/openram/openram_sram_char_fixes.diff"; do
   git -C "$OR" apply --reverse --check "$CPATCH" 2>/dev/null || git -C "$OR" apply "$CPATCH" || fail "apply $CPATCH"
 done
 git -C "$OR" diff --stat
@@ -58,8 +59,12 @@ mkdir -p "$OR/macros/char"
 start=$(date +%s)
 (cd "$OR" && nix --extra-experimental-features 'nix-command flakes' develop --quiet --command \
    bash -c "cd macros && '$OR/.venv/bin/python3' -u ../sram_char.py -v -v sram_configs/char_$NAME.py '$SP'") \
-   || fail "sram_char.py (see output above)"
+   || CHAR_RC=$?
 echo "characterization took $(( $(date +%s) - start )) s"
+# keep whatever OpenRAM wrote, even after a crash (the .lib is written before the script's last lines)
+mkdir -p "$ROOT/build/char/$CORNER"
+cp -a "$OR/macros/char/$CORNER/." "$ROOT/build/char/$CORNER/" 2>/dev/null || true
+[ "${CHAR_RC:-0}" = 0 ] || echo "WARNING: sram_char.py exited with ${CHAR_RC}; checking whether the .lib was completed"
 
 step "4/5 collect the .lib"
 LIB=$(ls "$OR/macros/char/$CORNER"/*.lib 2>/dev/null | head -1)
