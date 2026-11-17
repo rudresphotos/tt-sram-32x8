@@ -103,20 +103,6 @@ jobs:
       - name: Build tile + local TT precheck (flow/build.sh, macro step done above)
         run: SKIP_MACRO=1 flow/build.sh ci
 
-      # Sign-off STA (D3) with the ngspice .lib files committed in build/macro/lib/ (made by characterize.yaml).
-      # (OpenRAM's analytical .lib cannot stand in: the macro build writes it empty, see docs/flow_LOG.md.)
-      - name: STA with the macro .lib (flow/sta.sh)
-        run: |
-          if ls build/macro/lib/*.lib >/dev/null 2>&1; then flow/sta.sh ci; else echo "no build/macro/lib/*.lib yet: STA skipped"; fi
-
-      - name: Upload STA reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: sta_ci
-          path: build/sta
-          if-no-files-found: ignore
-
       - name: Upload local precheck reports
         if: always()
         uses: actions/upload-artifact@v4
@@ -132,6 +118,22 @@ jobs:
           name: librelane_run_ci
           path: build/runs/ci
           retention-days: 14
+
+      # STA runs AFTER the run directory is uploaded: re-running LibreLane's STA step rewrites final/metrics.json
+      # with the macro-aware timing, and the try9 comparison must see the D1 run as built.
+      # Sign-off STA (D3) with the ngspice .lib files committed in build/macro/lib/ (made by characterize.yaml).
+      # (OpenRAM's analytical .lib cannot stand in: the macro build writes it empty, see docs/flow_LOG.md.)
+      - name: STA with the macro .lib (flow/sta.sh)
+        run: |
+          if ls build/macro/lib/*.lib >/dev/null 2>&1; then flow/sta.sh ci; else echo "no build/macro/lib/*.lib yet: STA skipped"; fi
+
+      - name: Upload STA reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sta_ci
+          path: build/sta
+          if-no-files-found: ignore
 
       # Same paths as TT's custom_gds action, so TT's precheck action finds tt_submission/ where it expects it.
       - name: Upload tt_submission

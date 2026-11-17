@@ -274,6 +274,27 @@ Check (12-minute tripwire, `flow/debug/char_tripwire.sh`, run on branch probe/ng
   characterize.sh now keeps OpenRAM's output folder and checks the .lib even if sram_char.py exits non-zero.
 - (The Mac lost DNS for ~1.5 h during this run; CI was not affected.) Relaunched `6780eb7` at 06:51 UTC.
 
+### 23. D2 DONE: ngspice .lib at TT / SS / FF (char run 44034295552, `6780eb7`, all three jobs `success`)
+- OpenRAM `Characterization:` TT 6441.9 s, SS 5062.2 s, FF 5094.6 s; `Min Period Found:` 4.21875 / 7.8125 /
+  2.578125 ns. `flow/lib_sanity.py` on all three: `=> OK` (units `1ns`, `1pF`; operating conditions 1.8 V 25 C /
+  1.6 V 100 C / 1.95 V -40 C; area 26767.516 um^2 = 147.895 x 180.99).
+- clk->dout: TT 1.2050-2.0720, SS 2.0870-3.8770, FF 0.7020-1.2760 ns; setup TT 0.0900-0.5050, SS 0.1390-0.3830,
+  FF 0.0660-0.6520 ns; hold TT -0.3000-0.4810, SS -0.3740--0.0810, FF -0.1050-0.5050 ns.
+- Committed in `build/macro/lib/` with the OpenRAM logs (`char_logs/`), commit `d34a65f`.
+- Mac side note: around 08:40 UTC the Mac's `python3` on PATH became an Intel-only build ("Bad CPU type") and one
+  TLS check failed (self-signed chain); a re-check showed GitHub's real certificate (Sectigo) and I used
+  `/usr/bin/python3` from then on. No token was sent over the failing connection.
+
+### 24. D3 DONE: sign-off STA with the macro .lib (reproduce run 44049111747, `d34a65f`)
+- `flow/sta.sh ci` re-ran LibreLane's `OpenROAD.STAPostPNR` on the D1 run with the three .lib files;
+  `sta_summary.md`: `macro black-boxed in sta.log: no`.
+- Setup WS (worst corner max_ss) `6.8884295772748`, hold WS `7.550809968781638`, setup/hold TNS 0, violation
+  counts 0 at all 9 corners. Max-cap violations 8 per corner (`mem/dout0[0..7]`), max-slew 11-13 at SS (dout0 pins
+  + 5 inputs). Explained in docs/timing_signoff.md section 5. Reports copied to `docs/sta/`.
+- The `compare` job of this run failed on purpose-unrelated grounds: the STA step had rewritten
+  `final/metrics.json` before the run directory was uploaded (diffs only in timing/power/slew/cap metrics; macro
+  XOR/LEF/V checks passed). Fixed by moving the STA step after the upload in the workflow.
+
 ## Open items
 - Contributor: revoke and re-create the GitHub CLI token. It was printed once in Claude's tool output on
   2026-11-16 during a credential check (GitHub -> Settings -> Applications -> Authorized OAuth Apps ->
