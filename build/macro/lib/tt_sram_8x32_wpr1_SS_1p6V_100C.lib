@@ -94,9 +94,9 @@ cell (tt_sram_8x32_wpr1){
     }
 
     leakage_power () {
-      value : 0.05423090999999999;
+      value : 0.01531482;
     }
-    cell_leakage_power : 0.05423090999999999;
+    cell_leakage_power : 0.01531482;
     bus(din0){
         bus_type  : data; 
         direction  : input; 
@@ -150,14 +150,14 @@ cell (tt_sram_8x32_wpr1){
             related_pin : "clk0"; 
             timing_type : falling_edge; 
             cell_rise(CELL_TABLE) {
-            values("2.087, 2.755, 3.696",\
-                   "2.126, 2.795, 3.736",\
-                   "2.268, 2.936, 3.877");
+            values("2.126, 2.796, 3.698",\
+                   "2.165, 2.835, 3.738",\
+                   "2.307, 2.977, 3.88");
             }
             cell_fall(CELL_TABLE) {
-            values("2.087, 2.755, 3.696",\
-                   "2.126, 2.795, 3.736",\
-                   "2.268, 2.936, 3.877");
+            values("2.126, 2.796, 3.698",\
+                   "2.165, 2.835, 3.738",\
+                   "2.307, 2.977, 3.88");
             }
             rise_transition(CELL_TABLE) {
             values("0.098, 0.223, 0.638",\
@@ -316,37 +316,37 @@ cell (tt_sram_8x32_wpr1){
         internal_power(){
             when : "!csb0 & !web0"; 
             rise_power(scalar){
-                values("6.221766e-01");
+                values("6.175580e-01");
             }
             fall_power(scalar){
-                values("7.191248e-01");
+                values("7.049865e-01");
             }
         }
         internal_power(){
             when : "csb0 & !web0"; 
             rise_power(scalar){
-                values("4.355417e-01");
+                values("4.233592e-01");
             }
             fall_power(scalar){
-                values("3.309927e-01");
+                values("3.198035e-01");
             }
         }
         internal_power(){
             when : "!csb0 & web0"; 
             rise_power(scalar){
-                values("6.203194e-01");
+                values("6.028100e-01");
             }
             fall_power(scalar){
-                values("6.012766e-01");
+                values("5.838606e-01");
             }
         }
         internal_power(){
             when : "csb0 & web0"; 
             rise_power(scalar){
-                values("3.056969e-01");
+                values("2.945228e-01");
             }
             fall_power(scalar){
-                values("2.792822e-01");
+                values("2.710152e-01");
             }
         }
         timing(){ 
