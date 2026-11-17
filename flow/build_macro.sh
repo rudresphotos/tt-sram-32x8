@@ -67,6 +67,14 @@ step "3/7 OpenRAM's SKY130 PDK + SRAM cell library (first time: downloads; Nix a
 [ -d "$OR/sky130A" ] || nixdev make sky130-pdk || fail "make sky130-pdk"
 [ -d "$OR/technology/sky130/maglef_lib" ] || nixdev make sky130-install || fail "make sky130-install"
 nixdev bash -c 'for t in magic netgen ngspice klayout; do printf "%-8s %s\n" "$t" "$(readlink -f "$(command -v $t)" || echo MISSING)"; done'
+# Rudr's fixed dummy cell (17 Nov 2026, build/openram_cells/README.md): one li1 rectangle ties the two floating
+# gates of sky130_custom_dummy to VGND. Installed over OpenRAM's copy exactly as that README says.
+for f in gds:gds_lib sp:sp_lib; do
+  src="$ROOT/build/openram_cells/sky130_custom_dummy.${f%%:*}" dst="$OR/technology/sky130/${f#*:}/sky130_custom_dummy.${f%%:*}"
+  [ -f "$dst" ] || fail "OpenRAM has no $dst"
+  cp "$src" "$dst"
+  echo "dummy cell: $(basename "$src") -> ${f#*:}/  md5 $(md5sum "$dst" 2>/dev/null | cut -c1-32 || md5 -q "$dst")"
+done
 
 if [ "${SETUP_ONLY:-0}" = 1 ]; then echo "SETUP_ONLY=1: OpenRAM environment ready in $OR"; exit 0; fi
 
