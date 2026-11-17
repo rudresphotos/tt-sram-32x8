@@ -242,6 +242,20 @@ Check (12-minute tripwire, `flow/debug/char_tripwire.sh`, run on branch probe/ng
 `s_en delay=1.90187ns`, `delay_lh=2.072282`, `Found feasible_period: 10.0ns`, then `Successful period 5.0`.
 (Insurance runs char/hedge-2x2 and char/fast had problem 2 as well and were cancelled.)
 
+### 20. D2: SRAM delay characterization completes; DFF setup/hold needed one more fix
+- Run 43997440927 (`ca73ef4`, s_en fix): all three corners finished the SRAM delay part. OpenRAM log
+  `Min Period Found:` TT `4.21875ns`, SS `7.8125ns`, FF `2.578125ns` (jobs ran 01:44-02:37 UTC on 17 Nov).
+  All three then stopped in the setup/hold part: `ERROR: file setup_hold.py: line 194: Initial hold time fails for
+  data value feasible bound 27.5 Clk-to-Q False Setup/Hold 7.5`.
+- OpenRAM's temp files (artifact `openram_temp_TT`): `timing.lis` of the DFF deck says
+  `doAnalyses: TRAN: Timestep too small; time = 4e-08, timestep = 1.25e-23: trouble with node "vclk#branch"`,
+  i.e. ngspice aborts exactly at the stop time (40 ns), before the measurement is written.
+- Replayed that exact deck with variations (`flow/debug/sh_probe.sh`): as-is, no UIC, stop at 41 ns, trap method,
+  no .plot -> all abort the same way; only a 100 ps max step (`.TRAN 10p 40n 0n 100p UIC`) completes:
+  `clk2q_delay = 5.925641e-11`. Fix: `flow/openram/openram_setup_hold_tmax.diff` (setup/hold decks only;
+  the SRAM delay decks keep the 10 ps max step).
+- Relaunched as `9c64682` on char/d2-libs at 02:44 UTC.
+
 ## Open items
 - Contributor: revoke and re-create the GitHub CLI token. It was printed once in Claude's tool output on
   2026-11-16 during a credential check (GitHub -> Settings -> Applications -> Authorized OAuth Apps ->

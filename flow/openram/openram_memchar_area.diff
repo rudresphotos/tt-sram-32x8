@@ -1,0 +1,15 @@
+diff --git a/sram_char.py b/sram_char.py
+index 0c9738b..ab14120 100755
+--- a/sram_char.py
++++ b/sram_char.py
+@@ -56,6 +56,10 @@ debug.check(os.path.exists(args[1]), "Spice netlist file {} not found.".format(a
+ sp_file = args[1]
+ s.generate_pins()
+ s.setup_multiport_constants()
++# tt-sram-32x8 flow: fake_sram has no layout, but the .lib header (area) and datasheet info need width/height;
++# take them from the macro LEF SIZE, passed in through the config.
++s.width = float(getattr(OPTS, "memchar_width", 0))
++s.height = float(getattr(OPTS, "memchar_height", 0))
+ 
+ OPTS.netlist_only = True
+ OPTS.check_lvsdrc = False

@@ -11,6 +11,8 @@
 # convention of the rest of the netlist under the PDK's .option scale=1.0u), see flow/normalize_units.py.
 # Second characterizer-only patch (flow/openram/openram_setup_hold_tmax.diff): the DFF setup/hold decks use a
 # 100 ps max time step; with 10 ps ngspice-45 aborts them at the stop time ("Timestep too small").
+# Third (flow/openram/openram_memchar_area.diff): the stand-alone characterizer has no layout object, so the
+# macro width/height for the .lib area come from the macro LEF (CHAR_MACRO_W/H -> memchar_width/height).
 #
 # usage: flow/characterize.sh CORNER [SPICE_NETLIST]
 #   CORNER         TT (1.80 V 25 C) | SS (1.60 V 100 C) | FF (1.95 V -40 C)   = LibreLane's three corners
@@ -31,7 +33,8 @@ fail() { echo; echo "CHARACTERIZATION FAILED at step: $*" >&2; exit 1; }
 step "1/5 OpenRAM environment + characterizer patch"
 SETUP_ONLY=1 "$ROOT/flow/build_macro.sh" >/dev/null || fail "OpenRAM setup (run SETUP_ONLY=1 flow/build_macro.sh to see why)"
 export OPENRAM_HOME="$OR/compiler" OPENRAM_TECH="$OR/technology" PDK_ROOT="$OR" CHAR_CORNER="$CORNER"
-for CPATCH in "$ROOT/flow/openram/openram_memchar_storage_names.diff" "$ROOT/flow/openram/openram_setup_hold_tmax.diff"; do
+for CPATCH in "$ROOT/flow/openram/openram_memchar_storage_names.diff" "$ROOT/flow/openram/openram_setup_hold_tmax.diff" \
+              "$ROOT/flow/openram/openram_memchar_area.diff"; do
   git -C "$OR" apply --reverse --check "$CPATCH" 2>/dev/null || git -C "$OR" apply "$CPATCH" || fail "apply $CPATCH"
 done
 git -C "$OR" diff --stat
@@ -41,6 +44,12 @@ mkdir -p "$ROOT/build/char/$CORNER"
 SIM_SP="$ROOT/build/char/$CORNER/${NAME}_sim.sp"
 "$ROOT/.venv-flow/bin/python3" "$ROOT/flow/normalize_units.py" "$SP" "$SIM_SP" 6 || fail "netlist unit normalization"
 SP="$SIM_SP"
+
+# macro width/height for the .lib area, from the LEF next to the netlist (OpenRAM's own LEF of this macro)
+LEF="$(dirname "${2:-$ROOT/build/macro_runs/repro/raw/x}")/$NAME.lef"
+read -r CHAR_MACRO_W CHAR_MACRO_H < <(awk '/SIZE/ {print $2, $4; exit}' "$LEF") || fail "no SIZE in $LEF"
+export CHAR_MACRO_W CHAR_MACRO_H
+echo "macro size from $LEF: $CHAR_MACRO_W x $CHAR_MACRO_H um"
 
 step "3/5 ngspice characterization, corner $CORNER, netlist $SP"
 cp "$ROOT/flow/openram/sky130_sram_common.py" "$ROOT/flow/openram/$NAME.py" "$ROOT/flow/openram/char_$NAME.py" "$OR/macros/sram_configs/"
