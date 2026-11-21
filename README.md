@@ -47,9 +47,27 @@ For specifications and instructions, see the [analog specs page](https://tinytap
   floating transistor gates and sits on every bitline through the replica wordline; one li1 rectangle ties those
   gates to ground. See `build/openram_cells/README.md`.
 
+## Team
+
+This is a joint project.
+
+- **Karthik** started the project and chose OpenRAM. He built the verified 16x8 OpenRAM baseline that this design
+  grew from (repository [Alphyte161528/SRAM_Design](https://github.com/Alphyte161528/SRAM_Design), Nov 2026):
+  - the toolchain setup (Nix, pinned OpenRAM, SKY130 PDK) and the OpenRAM generation flow, with a patch that lets
+    OpenRAM finish without characterization;
+  - layout (PEX) extraction with Magic;
+  - the ngspice testbench (march, write-toggle and wordline-glitch tests at 7 corners) used for all the
+    verification of this 32x8 macro;
+  - the rules that made those simulations trustworthy: judge function on the extracted layout only (the schematic
+    netlist has a false wordline race), and use a 0.1 ns time step (1 ns gave false failures at the sf corner).
+- **Rudr Bisht** took it to Tiny Tapeout: 32x8 size and 1x2 tile, OpenRAM nwell/implant layout fixes, LibreLane
+  integration and power grid, Tiny Tapeout prechecks, gate-level test, and the diagnosis and fix of the floating-gate
+  dummy cell that failed the ff -40 C and sf 25 C corners.
+
 ## Credits
 
 - SRAM generated with [OpenRAM](https://github.com/VLSIDA/OpenRAM) (BSD-3-Clause), SKY130 cells from the
   SkyWater PDK and `sky130_fd_bd_sram` (Apache-2.0).
-- OpenRAM baseline flow and verification scripts: the team's OpenRAM baseline repository.
+- OpenRAM baseline flow, PEX extraction and verification testbench: Karthik
+  ([Alphyte161528/SRAM_Design](https://github.com/Alphyte161528/SRAM_Design)).
 - Tile integration, power grid and layout fixes for Tiny Tapeout: Rudr Bisht.
