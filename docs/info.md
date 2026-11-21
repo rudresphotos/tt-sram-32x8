@@ -28,3 +28,11 @@ The design was simulated with a 40 ns clock (25 MHz). Start slower, for example 
 ## External hardware
 
 None. The RP2040 on the demo board can drive the inputs and read the outputs.
+
+## Team
+
+A joint project. Karthik started it and built the verified 16x8 OpenRAM baseline it grew from: the OpenRAM flow,
+the layout extraction and the 7-corner ngspice testbench used to verify this macro
+([Alphyte161528/SRAM_Design](https://github.com/Alphyte161528/SRAM_Design)). Rudr Bisht scaled it to 32x8, fixed the
+layout for Tiny Tapeout, integrated it into the 1x2 tile and found and fixed a floating-gate bug in OpenRAM's dummy
+cell. OpenRAM: https://github.com/VLSIDA/OpenRAM.
