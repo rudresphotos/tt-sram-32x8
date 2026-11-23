@@ -40,7 +40,6 @@ Needs Windows 10/11 with WSL2 (or native Ubuntu 24.04), ≥ 8 GB RAM, ~15 GB fre
 ```
 setup.sh                  one-time toolchain install + smoke test
 nixrun                    run any command inside OpenRAM's Nix shell (magic, netgen, ngspice, klayout) in the current dir
-CLAUDE.md                 handover notes for Claude Code (read automatically)
 openram/
   sky130_sram_1rw_8x16.py               the OpenRAM config (16x8, 1 rw port, sky130 custom cell)
   sram_py_skip_characterization.patch   OpenRAM patch: delay stimulus, .lib characterization and datasheet only warn instead of aborting (they failed for this config; that's why the .lib is empty)

@@ -24,7 +24,7 @@ Last updated: 2026-11-12. This file documents every debug action taken on the ma
   macros/macro/sky130_sram_0kbytes_1rw_8x16_8/  OpenRAM OUTPUT ONLY (GDS, LEF, .v, .sp, ...)
 
 ~/sram_work/                       THE GIT REPO: everything we add lives here, separate from OpenRAM
-  setup.sh, README.md, CLAUDE.md   one-time install / human overview / Claude handover
+  setup.sh, README.md             one-time install / human overview
   openram/                         config, sram.py patch, generate.sh (OpenRAM -> macro/)
   macro/                           committed copy of the OpenRAM output (the scripts read this one)
   docs/sram_debug_log.md           this file
