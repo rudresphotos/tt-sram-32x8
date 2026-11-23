@@ -1,0 +1,152 @@
+[2026-11-12 07:20:35.727296] [openram.globals/init_openram]: Initializing OpenRAM...
+[2026-11-12 07:20:35.727441] [openram.globals/setup_paths]: OpenRAM source code found in /home/karthik_sram/OpenRAM/compiler
+[2026-11-12 07:20:35.727585] [openram.globals/setup_paths]: Temporary files saved in /tmp/openram_karthik_sram_2661_temp/
+[2026-11-12 07:20:35.727776] [openram.globals/read_config]: Configuration file is /home/karthik_sram/OpenRAM/macros/sram_configs/sky130_sram_1rw_8x16.py
+[2026-11-12 07:20:35.728350] [openram.globals/read_config]: Output saved in /home/karthik_sram/OpenRAM/macros/macro/sky130_sram_0kbytes_1rw_8x16_8/
+[2026-11-12 07:20:35.728646] [openram.globals/install_nix]: Bootstrapping toolchain with Nix...
+[2026-11-12 07:20:42.212898] [openram.globals/import_tech]: Tech directory found in /home/karthik_sram/OpenRAM/technology:/home/karthik_sram/OpenRAM/technology
+[2026-11-12 07:20:42.213655] [openram.globals/import_tech]: Adding technology path: /home/karthik_sram/OpenRAM/technology
+[2026-11-12 07:20:42.213866] [openram.globals/import_tech]: Adding technology path: /home/karthik_sram/OpenRAM/technology
+[2026-11-12 07:20:42.218744] [openram.globals/init_paths]: Creating temp directory: /tmp/openram_karthik_sram_2661_temp/
+[2026-11-12 07:20:42.350059] [openram.globals/setup_bitcell]: Using bitcell: bitcell_1port
+[2026-11-12 07:20:43.773840] [openram.characterizer/<module>]: Initializing characterizer...
+[2026-11-12 07:20:43.782942] [openram.characterizer/<module>]: Analytical model enabled.
+[2026-11-12 07:20:43.792167] [openram.verify/<module>]: Initializing verify...
+[2026-11-12 07:20:43.800380] [openram.verify/<module>]: Finding DRC/LVS/PEX tools.
+[2026-11-12 07:20:43.809024] [openram.globals/get_tool]: Using DRC: /nix/store/1zcyq032zc3mzhmgs2j3q2rmfrjj5v6b-magic-vlsi-8.3.629/bin/magic
+[2026-11-12 07:20:43.817426] [openram.globals/get_tool]: Using LVS: /nix/store/h3crgmx1w7h86qjpr131igi7p576mp3x-netgen-1.5.318/bin/netgen
+[2026-11-12 07:20:43.826030] [openram.globals/get_tool]: Using PEX: /nix/store/1zcyq032zc3mzhmgs2j3q2rmfrjj5v6b-magic-vlsi-8.3.629/bin/magic
+[2026-11-12 07:20:43.826707] [openram.globals/setup_bitcell]: Using bitcell: bitcell_1port
+[2026-11-12 07:20:43.826758] |==============================================================================|
+[2026-11-12 07:20:43.826812] |=========                      OpenRAM v1.2.50                       =========|
+[2026-11-12 07:20:43.826846] |=========                                                            =========|
+[2026-11-12 07:20:43.826874] |=========               VLSI Design and Automation Lab               =========|
+[2026-11-12 07:20:43.826900] |=========        Computer Science and Engineering Department         =========|
+[2026-11-12 07:20:43.826926] |=========            University of California Santa Cruz             =========|
+[2026-11-12 07:20:43.826952] |=========                                                            =========|
+[2026-11-12 07:20:43.826978] |=========          Usage help: openram-user-group@ucsc.edu           =========|
+[2026-11-12 07:20:43.827004] |========= Development help: https://github.com/VLSIDA/OpenRAM/issues =========|
+[2026-11-12 07:20:43.827029] |=========                See LICENSE for license info                =========|
+[2026-11-12 07:20:43.827054] |==============================================================================|
+[2026-11-12 07:20:43.827087] ** Start: 11/12/2026 07:20:43
+[2026-11-12 07:20:43.827116] Technology: sky130
+[2026-11-12 07:20:43.827144] Total size: 128 bits
+[2026-11-12 07:20:43.827172] Word size: 8
+Words: 16
+Banks: 1
+[2026-11-12 07:20:43.827199] RW ports: 1
+R-only ports: 0
+W-only ports: 0
+[2026-11-12 07:20:43.827226] DRC/LVS/PEX is only run on the top-level design to save run-time (inline_lvsdrc=True to do inline checking).
+[2026-11-12 07:20:43.827252] Characterization is disabled (using analytical delay models) (analytical_delay=False to simulate).
+[2026-11-12 07:20:43.827283] Only generating nominal corner timing.
+[2026-11-12 07:20:43.827311] Words per row: 1
+[2026-11-12 07:20:43.827345] Output files are: 
+[2026-11-12 07:20:43.827381] /home/karthik_sram/OpenRAM/macros/macro/sky130_sram_0kbytes_1rw_8x16_8/sky130_sram_0kbytes_1rw_8x16_8.lvs
+[2026-11-12 07:20:43.827407] /home/karthik_sram/OpenRAM/macros/macro/sky130_sram_0kbytes_1rw_8x16_8/sky130_sram_0kbytes_1rw_8x16_8.sp
+[2026-11-12 07:20:43.827430] /home/karthik_sram/OpenRAM/macros/macro/sky130_sram_0kbytes_1rw_8x16_8/sky130_sram_0kbytes_1rw_8x16_8.v
+[2026-11-12 07:20:43.827452] /home/karthik_sram/OpenRAM/macros/macro/sky130_sram_0kbytes_1rw_8x16_8/sky130_sram_0kbytes_1rw_8x16_8.lib
+[2026-11-12 07:20:43.827475] /home/karthik_sram/OpenRAM/macros/macro/sky130_sram_0kbytes_1rw_8x16_8/sky130_sram_0kbytes_1rw_8x16_8.py
+[2026-11-12 07:20:43.827498] /home/karthik_sram/OpenRAM/macros/macro/sky130_sram_0kbytes_1rw_8x16_8/sky130_sram_0kbytes_1rw_8x16_8.html
+[2026-11-12 07:20:43.827520] /home/karthik_sram/OpenRAM/macros/macro/sky130_sram_0kbytes_1rw_8x16_8/sky130_sram_0kbytes_1rw_8x16_8.log
+[2026-11-12 07:20:43.827543] /home/karthik_sram/OpenRAM/macros/macro/sky130_sram_0kbytes_1rw_8x16_8/sky130_sram_0kbytes_1rw_8x16_8.lef
+[2026-11-12 07:20:43.827565] /home/karthik_sram/OpenRAM/macros/macro/sky130_sram_0kbytes_1rw_8x16_8/sky130_sram_0kbytes_1rw_8x16_8.gds
+[2026-11-12 07:20:43.833759] [openram.sram_config/recompute_sizes]: Recomputing with words per row: 1
+[2026-11-12 07:20:43.834138] [openram.sram_config/recompute_sizes]: Rows: 16 Cols: 8
+[2026-11-12 07:20:43.834532] [openram.sram_config/recompute_sizes]: Row addr size: 5 Col addr size: 0 Bank addr size: 5
+[2026-11-12 07:20:43.834753] [openram.sram_config/compute_sizes]: Set SRAM Words Per Row=1
+[2026-11-12 07:20:43.865964] [openram.modules.bitcell_base_array/__init__]: Creating sky130_sram_0kbytes_1rw_8x16_8_capped_replica_bitcell_array 17 x 9
+[2026-11-12 07:20:43.866398] [openram.modules.capped_replica_bitcell_array/__init__]: Creating sky130_sram_0kbytes_1rw_8x16_8_capped_replica_bitcell_array 17 x 9 rbls: [1, 0] left_rbl: [0] right_rbl: []
+[2026-11-12 07:20:43.867214] [openram.modules.bitcell_base_array/__init__]: Creating sky130_sram_0kbytes_1rw_8x16_8_replica_bitcell_array 17 x 9
+[2026-11-12 07:20:43.867748] [openram.modules.replica_bitcell_array/__init__]: Creating sky130_sram_0kbytes_1rw_8x16_8_replica_bitcell_array 17 x 9 rbls: [1, 0] left_rbl: [0] right_rbl: []
+[2026-11-12 07:20:43.868618] [openram.modules.bitcell_base_array/__init__]: Creating sky130_sram_0kbytes_1rw_8x16_8_bitcell_array 17 x 9
+[2026-11-12 07:20:43.869223] [openram.modules.bitcell_array/__init__]: Creating sky130_sram_0kbytes_1rw_8x16_8_bitcell_array 17 x 9
+[2026-11-12 07:20:43.889529] [openram.modules.bitcell_base_array/__init__]: Creating sky130_sram_0kbytes_1rw_8x16_8_replica_column 18 x 1
+[2026-11-12 07:20:43.901533] [openram.modules.bitcell_base_array/__init__]: Creating sky130_sram_0kbytes_1rw_8x16_8_dummy_array 1 x 9
+[2026-11-12 07:20:43.912017] [openram.modules.bitcell_base_array/__init__]: Creating sky130_sram_0kbytes_1rw_8x16_8_dummy_array_0 1 x 10
+[2026-11-12 07:20:43.915987] [openram.modules.bitcell_base_array/__init__]: Creating sky130_sram_0kbytes_1rw_8x16_8_dummy_array_1 1 x 10
+[2026-11-12 07:20:43.919991] [openram.modules.bitcell_base_array/__init__]: Creating sky130_sram_0kbytes_1rw_8x16_8_dummy_array_2 20 x 1
+[2026-11-12 07:20:43.926260] [openram.modules.bitcell_base_array/__init__]: Creating sky130_sram_0kbytes_1rw_8x16_8_dummy_array_3 20 x 1
+[2026-11-12 07:20:43.948100] [openram.modules.and2_dec/__init__]: Creating and2_dec and2_dec
+[2026-11-12 07:20:43.955782] [openram.modules.and3_dec/__init__]: Creating and3_dec and3_dec
+[2026-11-12 07:20:43.979656] [openram.modules.and4_dec/__init__]: Creating and4_dec and4_dec
+[2026-11-12 07:20:44.032414] [openram.modules.wordline_driver_array/__init__]: Creating sky130_sram_0kbytes_1rw_8x16_8_wordline_driver_array
+[2026-11-12 07:20:44.033127] [openram.modules.wordline_driver/__init__]: Creating wordline_driver wordline_driver
+[2026-11-12 07:20:44.057528] [openram.modules.and2_dec/__init__]: Creating and2_dec and2_dec_0
+[2026-11-12 07:20:44.071261] [openram.modules.precharge_array/__init__]: Creating sky130_sram_0kbytes_1rw_8x16_8_precharge_array
+[2026-11-12 07:20:44.080643] [openram.modules.sense_amp_array/__init__]: Creating sky130_sram_0kbytes_1rw_8x16_8_sense_amp_array
+[2026-11-12 07:20:44.095276] [openram.modules.write_driver_array/__init__]: Creating sky130_sram_0kbytes_1rw_8x16_8_write_driver_array
+[2026-11-12 07:20:44.141178] [openram.modules.dff_array/__init__]: Creating sky130_sram_0kbytes_1rw_8x16_8_row_addr_dff rows=5 cols=1
+[2026-11-12 07:20:44.145705] [openram.modules.dff_array/__init__]: Creating sky130_sram_0kbytes_1rw_8x16_8_data_dff rows=1 cols=9
+[2026-11-12 07:20:44.150119] [openram.modules.dff_array/__init__]: Creating sky130_sram_0kbytes_1rw_8x16_8_spare_wen_dff rows=1 cols=1
+[2026-11-12 07:20:44.151971] [openram.modules.control_logic_base/__init__]: Creating control_logic_rw
+[2026-11-12 07:20:44.152601] [openram.modules.dff_buf/__init__]: Creating sky130_sram_0kbytes_1rw_8x16_8_dff_buf
+[2026-11-12 07:20:44.162994] [openram.modules.dff_buf_array/__init__]: Creating sky130_sram_0kbytes_1rw_8x16_8_dff_buf_array
+[2026-11-12 07:20:44.163637] [openram.modules.dff_buf/__init__]: Creating sky130_sram_0kbytes_1rw_8x16_8_dff_buf_0
+[2026-11-12 07:20:44.168428] [openram.modules.pand2/__init__]: Creating pand2 pand2
+[2026-11-12 07:20:44.174432] [openram.modules.pdriver/__init__]: creating pdriver pdriver
+[2026-11-12 07:20:44.186763] [openram.modules.pbuf/__init__]: creating pbuf with size of 9
+[2026-11-12 07:20:44.193189] [openram.modules.pdriver/__init__]: creating pdriver pdriver_0
+[2026-11-12 07:20:44.209574] [openram.modules.pdriver/__init__]: creating pdriver pdriver_1
+[2026-11-12 07:20:44.214674] [openram.modules.pand3/__init__]: Creating pand3 pand3
+[2026-11-12 07:20:44.218161] [openram.modules.pdriver/__init__]: creating pdriver pdriver_2
+[2026-11-12 07:20:44.224956] [openram.modules.pand3/__init__]: Creating pand3 pand3_0
+[2026-11-12 07:20:44.225717] [openram.modules.pdriver/__init__]: creating pdriver pdriver_3
+[2026-11-12 07:20:44.229393] [openram.modules.pdriver/__init__]: creating pdriver pdriver_4
+[2026-11-12 07:20:44.233267] [openram.modules.delay_chain/__init__]: creating delay chain [4, 4, 4, 4, 4, 4, 4, 4, 4]
+[2026-11-12 07:20:44.276737] ** Submodules: 0.4 seconds
+[2026-11-12 07:20:44.285357] ** Placement: 0.0 seconds
+[2026-11-12 07:20:46.076216] [openram.base.hierarchy_layout/get_bbox]: Size: 133.195 x 146.285 with perimeter margin 0
+[2026-11-12 07:20:46.084299] [openram.router.router_tech/__init__]: Minimum track width: 0.680
+[2026-11-12 07:20:46.084702] [openram.router.router_tech/__init__]: Minimum track space: 0.300
+[2026-11-12 07:20:46.085095] [openram.router.router_tech/__init__]: Minimum track wire width: 0.380
+[2026-11-12 07:20:46.085422] [openram.router.signal_escape_router/route]: Running signal escape router...
+[2026-11-12 07:20:47.750004] [openram.router.router_tech/__init__]: Minimum track width: 0.680
+[2026-11-12 07:20:47.750456] [openram.router.router_tech/__init__]: Minimum track space: 0.300
+[2026-11-12 07:20:47.751020] [openram.router.router_tech/__init__]: Minimum track wire width: 0.380
+[2026-11-12 07:20:47.751318] [openram.router.supply_router/route]: Running router for vdd and gnd...
+[2026-11-12 07:21:06.544745] ** Routing: 22.3 seconds
+[2026-11-12 07:21:22.873800] [openram.verify.magic/run_drc]: DRC Errors sky130_sram_0kbytes_1rw_8x16_8	0
+[2026-11-12 07:21:23.946104] [openram.verify.magic/run_lvs]: sky130_sram_0kbytes_1rw_8x16_8	LVS matches
+[2026-11-12 07:21:23.946269] ** Verification: 17.4 seconds
+[2026-11-12 07:21:23.946322] ** SRAM creation: 40.1 seconds
+[2026-11-12 07:21:23.946406] SP: Writing to /home/karthik_sram/OpenRAM/macros/macro/sky130_sram_0kbytes_1rw_8x16_8/sky130_sram_0kbytes_1rw_8x16_8.sp
+[2026-11-12 07:21:23.960386] [openram.characterizer.functional/__init__]: Random seed for functional simulation: 1794468083960047522
+[2026-11-12 07:21:23.999338] ** Spice writing: 0.1 seconds
+[2026-11-12 07:21:23.999441] DELAY: Writing stimulus...
+[2026-11-12 07:21:24.037037] ERROR: file simulation.py: line 613: Could not find bl net in timing paths.
+
+[2026-11-12 07:21:24.037493] WARNING: file sram.py: line 134: Skipping delay stimulus: 
+
+[2026-11-12 07:21:24.037544] ** DELAY: 0.0 seconds
+[2026-11-12 07:21:24.044991] GDS: Writing to /home/karthik_sram/OpenRAM/macros/macro/sky130_sram_0kbytes_1rw_8x16_8/sky130_sram_0kbytes_1rw_8x16_8.gds
+[2026-11-12 07:21:24.114968] ** GDS: 0.1 seconds
+[2026-11-12 07:21:24.115038] LEF: Writing to /home/karthik_sram/OpenRAM/macros/macro/sky130_sram_0kbytes_1rw_8x16_8/sky130_sram_0kbytes_1rw_8x16_8.lef
+[2026-11-12 07:21:24.119568] ** LEF: 0.0 seconds
+[2026-11-12 07:21:24.119629] LVS: Writing to /home/karthik_sram/OpenRAM/macros/macro/sky130_sram_0kbytes_1rw_8x16_8/sky130_sram_0kbytes_1rw_8x16_8.lvs.sp
+[2026-11-12 07:21:24.132220] ** LVS writing: 0.0 seconds
+[2026-11-12 07:21:24.132447] LIB: Characterizing... 
+[2026-11-12 07:21:24.133528] [openram.characterizer.lib/prepare_tables]: Slews: [0.00125 0.005   0.04   ]
+[2026-11-12 07:21:24.133993] [openram.characterizer.lib/prepare_tables]: Loads: [ 1.7225  6.89   27.56  ]
+[2026-11-12 07:21:24.134351] [openram.characterizer.lib/prepare_tables]: self.load_slews : [(np.float64(1.7225), np.float64(0.00125)), (np.float64(6.89), np.float64(0.00125)), (np.float64(27.56), np.float64(0.00125)), (np.float64(1.7225), np.float64(0.005)), (np.float64(6.89), np.float64(0.005)), (np.float64(27.56), np.float64(0.005)), (np.float64(1.7225), np.float64(0.04)), (np.float64(6.89), np.float64(0.04)), (np.float64(27.56), np.float64(0.04))]
+[2026-11-12 07:21:24.134671] [openram.characterizer.lib/characterize_corners]: Characterizing corners: [('TT', 1.8, 25)]
+[2026-11-12 07:21:24.134975] [openram.characterizer.lib/characterize_corners]: Corner: ('TT', 1.8, 25)
+[2026-11-12 07:21:24.135308] [openram.characterizer.lib/characterize_corners]: Writing to /home/karthik_sram/OpenRAM/macros/macro/sky130_sram_0kbytes_1rw_8x16_8/sky130_sram_0kbytes_1rw_8x16_8_TT_1p8V_25C.lib
+[2026-11-12 07:21:24.141175] ERROR: file simulation.py: line 613: Could not find bl net in timing paths.
+
+[2026-11-12 07:21:24.141765] WARNING: file sram.py: line 195: Skipping lib characterization: 
+
+[2026-11-12 07:21:24.141889] ** Characterization: 0.0 seconds
+[2026-11-12 07:21:24.142075] Config: Writing to /home/karthik_sram/OpenRAM/macros/macro/sky130_sram_0kbytes_1rw_8x16_8/sky130_sram_0kbytes_1rw_8x16_8.py
+[2026-11-12 07:21:24.142117] ** Config: 0.0 seconds
+[2026-11-12 07:21:24.149864] Datasheet: Writing to /home/karthik_sram/OpenRAM/macros/macro/sky130_sram_0kbytes_1rw_8x16_8/sky130_sram_0kbytes_1rw_8x16_8.html
+[2026-11-12 07:21:24.150341] WARNING: file sram.py: line 216: Skipping datasheet: [Errno 2] No such file or directory: '/home/karthik_sram/OpenRAM/macros/macro/sky130_sram_0kbytes_1rw_8x16_8//datasheet.info'
+
+[2026-11-12 07:21:24.150402] ** Datasheet: 0.0 seconds
+[2026-11-12 07:21:24.150435] Verilog: Writing to /home/karthik_sram/OpenRAM/macros/macro/sky130_sram_0kbytes_1rw_8x16_8/sky130_sram_0kbytes_1rw_8x16_8.v
+[2026-11-12 07:21:24.150674] ** Verilog: 0.0 seconds
+[2026-11-12 07:21:24.150977] [openram.globals/purge_temp]: Purging temp directory: /tmp/openram_karthik_sram_2661_temp/
+[2026-11-12 07:21:24.158398] [openram.verify.magic/print_drc_stats]: DRC runs: 1
+[2026-11-12 07:21:24.158596] [openram.verify.magic/print_lvs_stats]: LVS runs: 1
+[2026-11-12 07:21:24.158764] [openram.verify.magic/print_pex_stats]: PEX runs: 0
+[2026-11-12 07:21:24.158808] ** End: 40.3 seconds

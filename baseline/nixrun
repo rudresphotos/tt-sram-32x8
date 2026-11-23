@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Run a command inside the OpenRAM nix dev shell, with the same env vars as ~/.bashrc,
+# in the CURRENT directory.   usage: ~/sram_work/nixrun <command> [args...]
+export OPENRAM_HOME="$HOME/OpenRAM/compiler"
+export OPENRAM_TECH="$HOME/OpenRAM/technology"
+export PDK_ROOT="$HOME/OpenRAM"
+. "$HOME/.nix-profile/etc/profile.d/nix.sh"
+here="$PWD"
+cd "$HOME/OpenRAM" && exec nix develop --quiet --command bash -c "cd \"$here\" && $(printf "%q " "$@")"
