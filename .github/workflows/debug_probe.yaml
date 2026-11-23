@@ -1,0 +1,26 @@
+# Short debug runs (pushes to probe/* branches only): flow/debug/ngspice_probe.sh in OpenRAM's environment.
+name: debug probe
+on:
+  push:
+    branches: ['probe/**']
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/OpenRAM/skywater-pdk
+            ~/OpenRAM/ciel
+            ~/OpenRAM/sky130A
+            ~/OpenRAM/sky130_fd_bd_sram
+            ~/OpenRAM/technology/sky130/*_lib
+          key: openram-pdk-2f7b3866-sky130-e8294524
+      - run: flow/debug/sh_probe.sh

@@ -1,0 +1,100 @@
+
+===========================================================================
+report_checks -unconstrained
+===========================================================================
+======================= nom_tt_025C_1v80 Corner ===================================
+
+Startpoint: mem (falling edge-triggered flip-flop clocked by clk)
+Endpoint: uo_out[1] (output port clocked by clk)
+Path Group: clk
+Path Type: max
+
+Fanout         Cap        Slew       Delay        Time   Description
+---------------------------------------------------------------------------------------------
+                                 20.000000   20.000000   clock clk (fall edge)
+                                  0.000000   20.000000   clock source latency
+     1    0.063617    0.141667    0.111754   20.111755 v clk (in)
+                                                         clk (net)
+                      0.189935    0.000000   20.111755 v mem/clk0 (tt_sram_8x32_wpr1)
+     1    0.078600    0.398129    2.187365   22.299120 ^ mem/dout0[1] (tt_sram_8x32_wpr1)
+                                                         uo_out[1] (net)
+                      0.298597    0.003519   22.302639 ^ uo_out[1] (out)
+                                             22.302639   data arrival time
+
+                                 40.000000   40.000000   clock clk (rise edge)
+                                  0.000000   40.000000   clock network delay (propagated)
+                                 -0.250000   39.750000   clock uncertainty
+                                  0.000000   39.750000   clock reconvergence pessimism
+                                 -8.000000   31.750000   output external delay
+                                             31.750000   data required time
+---------------------------------------------------------------------------------------------
+                                             31.750000   data required time
+                                            -22.302639   data arrival time
+---------------------------------------------------------------------------------------------
+                                              9.447360   slack (MET)
+
+
+
+
+===========================================================================
+report_checks --slack_max -0.01
+============================================================================
+======================= nom_tt_025C_1v80 Corner ===================================
+
+No paths found.
+
+
+===========================================================================
+ report_check_types -max_slew -max_cap -max_fanout -violators
+============================================================================
+======================= nom_tt_025C_1v80 Corner ===================================
+
+max capacitance
+
+Pin                                        Limit         Cap       Slack
+------------------------------------------------------------------------
+mem/dout0[6]                            0.055120    0.078888   -0.023768 (VIOLATED)
+mem/dout0[3]                            0.055120    0.078658   -0.023538 (VIOLATED)
+mem/dout0[1]                            0.055120    0.078600   -0.023480 (VIOLATED)
+mem/dout0[2]                            0.055120    0.078420   -0.023300 (VIOLATED)
+mem/dout0[4]                            0.055120    0.078200   -0.023080 (VIOLATED)
+mem/dout0[5]                            0.055120    0.077834   -0.022714 (VIOLATED)
+mem/dout0[7]                            0.055120    0.075521   -0.020401 (VIOLATED)
+mem/dout0[0]                            0.055120    0.068603   -0.013483 (VIOLATED)
+
+
+
+===========================================================================
+report_parasitic_annotation -report_unannotated
+============================================================================
+Found 19 unannotated drivers.
+ ena
+ rst_n
+ mem/dout0[8]
+ tt_um_rudresphotos_sram/HI
+ tt_um_rudresphotos_sram_1/HI
+ tt_um_rudresphotos_sram_10/HI
+ tt_um_rudresphotos_sram_11/HI
+ tt_um_rudresphotos_sram_12/HI
+ tt_um_rudresphotos_sram_13/HI
+ tt_um_rudresphotos_sram_14/HI
+ tt_um_rudresphotos_sram_15/HI
+ tt_um_rudresphotos_sram_2/HI
+ tt_um_rudresphotos_sram_3/HI
+ tt_um_rudresphotos_sram_4/HI
+ tt_um_rudresphotos_sram_5/HI
+ tt_um_rudresphotos_sram_6/HI
+ tt_um_rudresphotos_sram_7/HI
+ tt_um_rudresphotos_sram_8/HI
+ tt_um_rudresphotos_sram_9/HI
+Found 0 partially unannotated drivers.
+
+===========================================================================
+max slew violation count 0
+max fanout violation count 0
+max cap violation count 8
+============================================================================
+
+===========================================================================
+check_setup -verbose -unconstrained_endpoints -multiple_clock -no_clock -no_input_delay -loops -generated_clocks
+===========================================================================

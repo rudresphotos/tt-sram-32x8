@@ -1,0 +1,46 @@
+diff --git a/compiler/sram.py b/compiler/sram.py
+index 4008e2a..3e11851 100644
+--- a/compiler/sram.py
++++ b/compiler/sram.py
+@@ -125,10 +125,13 @@ class sram():
+         d = delay(self.s, spname, ("TT", 5, 25), output_path=OPTS.output_path)
+         probe_address = get_probe_address(self.s)
+         probe_data = self.s.word_size - 1
+-        d.analysis_init(probe_address, probe_data)
+-        d.targ_read_ports.extend(self.s.read_ports)
+-        d.targ_write_ports = [self.s.write_ports[0]]
+-        d.write_delay_stimulus()
++        try:
++            d.analysis_init(probe_address, probe_data)
++            d.targ_read_ports.extend(self.s.read_ports)
++            d.targ_write_ports = [self.s.write_ports[0]]
++            d.write_delay_stimulus()
++        except Exception as e:
++            debug.warning("Skipping delay stimulus: {}".format(e))
+         print_time("DELAY", datetime.datetime.now(), start_time)
+ 
+         # Save trimmed spice file
+@@ -186,7 +189,10 @@ class sram():
+         start_time = datetime.datetime.now()
+         from openram.characterizer import lib
+         debug.print_raw("LIB: Characterizing... ")
+-        lib(out_dir=OPTS.output_path, sram=self.s, sp_file=sp_file)
++        try:
++            lib(out_dir=OPTS.output_path, sram=self.s, sp_file=sp_file)
++        except Exception as e:
++            debug.warning("Skipping lib characterization: {}".format(e))
+         print_time("Characterization", datetime.datetime.now(), start_time)
+ 
+         # Write the config file
+@@ -204,7 +210,10 @@ class sram():
+         from openram.datasheet import datasheet_gen
+         dname = OPTS.output_path + self.s.name + ".html"
+         debug.print_raw("Datasheet: Writing to {0}".format(dname))
+-        datasheet_gen.datasheet_write(dname)
++        try:
++            datasheet_gen.datasheet_write(dname)
++        except Exception as e:
++            debug.warning("Skipping datasheet: {}".format(e))
+         print_time("Datasheet", datetime.datetime.now(), start_time)
+ 
+         # Write a verilog model

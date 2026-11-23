@@ -1,0 +1,72 @@
+meta:
+  version: 3
+  flow: Classic
+DESIGN_NAME: tt_um_rudresphotos_sram
+VERILOG_FILES:
+- dir::src/tt_um_rudresphotos_sram.v
+FP_SIZING: absolute
+DIE_AREA:
+- 0
+- 0
+- 161.0
+- 225.76
+FP_DEF_TEMPLATE: dir::def/tt_block_1x2_pg.def
+VDD_PIN: VPWR
+GND_PIN: VGND
+RT_MAX_LAYER: met4
+CLOCK_PORT: clk
+CLOCK_PERIOD: 40
+RUN_CTS: true
+RUN_KLAYOUT_XOR: false
+RUN_KLAYOUT_DRC: false
+DESIGN_REPAIR_BUFFER_OUTPUT_PORTS: false
+TOP_MARGIN_MULT: 1
+BOTTOM_MARGIN_MULT: 1
+LEFT_MARGIN_MULT: 6
+RIGHT_MARGIN_MULT: 6
+GRT_ALLOW_CONGESTION: true
+FP_IO_HLENGTH: 2
+FP_IO_VLENGTH: 2
+FP_PDN_MULTILAYER: false
+MAGIC_DEF_LABELS: false
+MAGIC_WRITE_LEF_PINONLY: true
+PL_TARGET_DENSITY_PCT: 60
+MACROS:
+  tt_sram_8x32_wpr1:
+    gds:
+    - dir::macro/tt_sram_8x32_wpr1.gds
+    lef:
+    - dir::macro/tt_sram_8x32_wpr1.lef
+    nl:
+    - dir::macro/tt_sram_8x32_wpr1.v
+    instances:
+      mem:
+        location:
+        - 6.44
+        - 8.16
+        orientation: N
+    lib:
+      '*_tt_025C_1v80':
+      - /home/runner/work/tt-sram-32x8/tt-sram-32x8/build/macro/lib/tt_sram_8x32_wpr1_TT_1p8V_25C.lib
+      '*_ss_100C_1v60':
+      - /home/runner/work/tt-sram-32x8/tt-sram-32x8/build/macro/lib/tt_sram_8x32_wpr1_SS_1p6V_100C.lib
+      '*_ff_n40C_1v95':
+      - /home/runner/work/tt-sram-32x8/tt-sram-32x8/build/macro/lib/tt_sram_8x32_wpr1_FF_1p95V_-40C.lib
+PDN_MACRO_CONNECTIONS:
+- mem VPWR VGND vccd1 vssd1
+PDN_CFG: dir::pdn/pdn_cfg.tcl
+PDN_HORIZONTAL_HALO: 0
+PDN_VERTICAL_HALO: 0
+FP_MACRO_HORIZONTAL_HALO: 3.68
+FP_MACRO_VERTICAL_HALO: 2.72
+STA_MACRO_PRIORITIZE_NL: false
+STA_CORNERS:
+- nom_tt_025C_1v80
+- min_tt_025C_1v80
+- max_tt_025C_1v80
+- nom_ss_100C_1v60
+- min_ss_100C_1v60
+- max_ss_100C_1v60
+- nom_ff_n40C_1v95
+- min_ff_n40C_1v95
+- max_ff_n40C_1v95

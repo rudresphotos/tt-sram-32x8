@@ -1,0 +1,14 @@
+diff --git a/compiler/characterizer/delay.py b/compiler/characterizer/delay.py
+index 93b7c98..6a5cf62 100644
+--- a/compiler/characterizer/delay.py
++++ b/compiler/characterizer/delay.py
+@@ -231,7 +231,8 @@ class delay(simulation):
+         bit_row = self.get_address_row_number(probe_address)
+         if OPTS.top_process == "memchar":
+             cell_name = self.cell_name.format(bit_row, bit_col)
+-            storage_names = ("Q", "Q_bar")
++            # tt-sram-32x8 flow: storage net names come from the config (sky130_custom_cell uses Q / Qbar)
++            storage_names = tuple(getattr(OPTS, "memchar_storage_names", ("Q", "Q_bar")))
+         else:
+             (cell_name, cell_inst) = self.sram.get_cell_name(self.sram.name, bit_row, bit_col)
+             storage_names = cell_inst.mod.get_storage_net_names()
