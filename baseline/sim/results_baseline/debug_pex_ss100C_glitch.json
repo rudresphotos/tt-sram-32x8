@@ -1,0 +1,1 @@
+{"test": "debug", "netlist": "pex", "corner": "ss", "temp": 100.0, "period": 40.0, "sample": 0.05, "ops": [["idle", 0, 0], ["w", 0, 15], ["w", 1, 240], ["r", 0, 15], ["r", 1, 240], ["idle", 0, 0]], "glitch": true}
