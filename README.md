@@ -51,7 +51,7 @@ For specifications and instructions, see the [analog specs page](https://tinytap
 
 This is a joint project.
 
-- **Karthik** started the project and chose OpenRAM. He built the verified 16x8 OpenRAM baseline that this design
+- **Karthik Raj Palleboyina** started the project and chose OpenRAM. He built the verified 16x8 OpenRAM baseline that this design
   grew from (repository [Alphyte161528/SRAM_Design](https://github.com/Alphyte161528/SRAM_Design), Nov 2026):
   - the toolchain setup (Nix, pinned OpenRAM, SKY130 PDK) and the OpenRAM generation flow, with a patch that lets
     OpenRAM finish without characterization;
@@ -68,6 +68,6 @@ This is a joint project.
 
 - SRAM generated with [OpenRAM](https://github.com/VLSIDA/OpenRAM) (BSD-3-Clause), SKY130 cells from the
   SkyWater PDK and `sky130_fd_bd_sram` (Apache-2.0).
-- OpenRAM baseline flow, PEX extraction and verification testbench: Karthik
+- OpenRAM baseline flow, PEX extraction and verification testbench: Karthik Raj Palleboyina
   ([Alphyte161528/SRAM_Design](https://github.com/Alphyte161528/SRAM_Design)).
 - Tile integration, power grid and layout fixes for Tiny Tapeout: Rudr Bisht.

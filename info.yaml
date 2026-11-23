@@ -1,7 +1,7 @@
 # Tiny Tapeout project information
 project:
   title:        "SKY130 SRAM 32x8 (OpenRAM)"
-  author:       "Rudr Bisht"
+  author:       "Rudr Bisht, Karthik Raj Palleboyina"
   discord:      ""
   description:  "256-bit single-port SRAM (32 words x 8 bits) made with OpenRAM, pins wired directly to the TT pins"
   language:     "Full Custom"
