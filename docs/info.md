@@ -31,8 +31,21 @@ None. The RP2040 on the demo board can drive the inputs and read the outputs.
 
 ## Team
 
-A joint project. Karthik Raj Palleboyina started it and built the verified 16x8 OpenRAM baseline it grew from: the OpenRAM flow,
-the layout extraction and the 7-corner ngspice testbench used to verify this macro
-([Alphyte161528/SRAM_Design](https://github.com/Alphyte161528/SRAM_Design)). Rudr Bisht scaled it to 32x8, fixed the
-layout for Tiny Tapeout, integrated it into the 1x2 tile and found and fixed a floating-gate bug in OpenRAM's dummy
-cell. OpenRAM: https://github.com/VLSIDA/OpenRAM.
+A joint project.
+
+- **Karthik Raj Palleboyina** started it and built the verified 16x8 OpenRAM baseline it grew from: the OpenRAM flow,
+  the layout extraction and the 7-corner ngspice testbench used to verify this macro
+  ([Alphyte161528/SRAM_Design](https://github.com/Alphyte161528/SRAM_Design)).
+- **Rudr Bisht** took it to Tiny Tapeout:
+  - sized it to 32x8 (256 bits) to fit a 1x2 analog tile, after an OpenRAM size sweep against the tile limits;
+  - fixed the OpenRAM layout for the SKY130 rules (deep-nwell patch for nwell.5a, implant-spacing fixes), macro LVS re-checked;
+  - integrated it into the tile: pin map, LibreLane hardening (DRC, LVS, antenna 0) and a custom met4 power grid;
+  - passed the local and official Tiny Tapeout prechecks and a 64/64 gate-level test through the TT pins;
+  - found and fixed a floating-gate bug in OpenRAM's dummy cell that failed the ff -40 C and sf 25 C corners;
+  - verified the fixed macro at 7 process corners x 3 supplies (1.60 / 1.80 / 1.95 V): 63/63 runs pass;
+  - characterized the stock sense amp, and is designing a custom StrongARM sense amp (in progress).
+- **Aaryan Sharma** made the build reproducible and signed off the timing: a one-command CI flow that regenerates the
+  macro and tile and compares them with the committed GDS, an ngspice-characterized .lib of the macro at TT / SS / FF,
+  and OpenSTA sign-off with timing met at all 9 corners.
+
+OpenRAM: https://github.com/VLSIDA/OpenRAM.

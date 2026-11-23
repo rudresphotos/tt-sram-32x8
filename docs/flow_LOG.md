@@ -79,7 +79,7 @@ Network note: `raw.githubusercontent.com` is blocked on this network (curl error
   1.000000 um^2`, so 3 of 4 checks FAIL as intended.
 - Not yet run: the real LibreLane build. That needs the fork on GitHub (next step).
 
-### 10. Fork and CI set up (done by Claude with the contributor's saved GitHub login, as asked)
+### 10. Fork and CI set up (with the contributor's saved GitHub login)
 - Upstream check: `GET /repos/rudresphotos/tt-sram-32x8/commits/main` -> `b34ab81`, the same as the bundle's
   `main`, so no rebase was needed.
 - Saved GitHub login has scopes `gist, read:org, repo, workflow` (from the `x-oauth-scopes` API header), so
@@ -338,6 +338,6 @@ timing; they were in try9 too.)
 - Optional, before D4: widen the characterized load range (`load_scales` up to 16) so the dout max-cap/slew
   violations and the extrapolated clk->dout go away.
 - Branches to tidy in the fork when done: char/hedge-2x2, char/fast, char/d2-libs, char/dummyfix, probe/ngspice (debug only).
-- Contributor: revoke and re-create the GitHub CLI token. It was printed once in Claude's tool output on
+- Contributor: revoke and re-create the GitHub CLI token. It was printed once in a tool output on
   2026-11-16 during a credential check (GitHub -> Settings -> Applications -> Authorized OAuth Apps ->
   GitHub CLI -> Revoke, then log in again).

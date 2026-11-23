@@ -60,9 +60,31 @@ This is a joint project.
     verification of this 32x8 macro;
   - the rules that made those simulations trustworthy: judge function on the extracted layout only (the schematic
     netlist has a false wordline race), and use a 0.1 ns time step (1 ns gave false failures at the sf corner).
-- **Rudr Bisht** took it to Tiny Tapeout: 32x8 size and 1x2 tile, OpenRAM nwell/implant layout fixes, LibreLane
-  integration and power grid, Tiny Tapeout prechecks, gate-level test, and the diagnosis and fix of the floating-gate
-  dummy cell that failed the ff -40 C and sf 25 C corners.
+- **Rudr Bisht** took the 16x8 baseline to a submittable Tiny Tapeout chip:
+  - sizing for the tile: an OpenRAM size sweep (32x8, 64x8, 128x8) against the Tiny Tapeout tile limits; chose 32x8
+    (256 bits, 147.9 x 181.0 um), which fits a 1x2 analog tile;
+  - layout fixes to pass the SKY130 rules: an OpenRAM deep-nwell patch for nwell.5a, and implant-spacing fixes for the
+    KLayout FEOL rules (fill script plus manual implant bridges), with macro LVS re-checked (406 devices, match);
+  - Tiny Tapeout integration: top module and pin map (address, write enable, chip select, data in/out), LibreLane
+    3.0.14 hardening with DRC, LVS and antenna at 0, and a custom power grid of two full-height met4 stripes
+    dropping via3 onto the SRAM power ring;
+  - prechecks and test: all 15 local Tiny Tapeout prechecks and the official GitHub precheck pass; gate-level test
+    through the TT pins passes 64/64;
+  - bug diagnosis and fix: traced the ff -40 C and sf 25 C failures to the OpenRAM dummy cell, whose missing contacts
+    left two transistor gates floating on every bitline; one li1 strap ties them to ground, and the fixed macro is
+    DRC-clean, LVS-matched and passes all 7 corners;
+  - PVT sign-off: 7 process corners x 3 supplies (1.60 / 1.80 / 1.95 V) with the output load from Aaryan's STA;
+    63/63 runs pass (alias, write-toggle and a 512/512-bit march), worst-case bitline split 1.345 V;
+  - sense-amp characterization: benchmarked the stock OpenRAM sense amp across corners and Monte Carlo mismatch
+    (it leans towards reading 0 and needs a 100-150 mV split);
+  - custom StrongARM sense amp (in progress): schematic, corner and Monte Carlo bench, and an input-pair sizing study
+    done; layout next.
+- **Aaryan Sharma** made the build reproducible and signed off the timing:
+  - a one-command CI flow (`make tile`) that regenerates the macro from the OpenRAM config, rebuilds the tile with
+    LibreLane, and compares it with the committed GDS;
+  - an ngspice-characterized Liberty (.lib) model of the macro at TT / SS / FF;
+  - sign-off STA with OpenSTA on the real macro timing (not black-boxed): timing met at all 9 corners, worst setup
+    slack +6.9 ns (see `docs/timing_signoff.md`).
 
 ## Credits
 
@@ -70,4 +92,5 @@ This is a joint project.
   SkyWater PDK and `sky130_fd_bd_sram` (Apache-2.0).
 - OpenRAM baseline flow, PEX extraction and verification testbench: Karthik Raj Palleboyina
   ([Alphyte161528/SRAM_Design](https://github.com/Alphyte161528/SRAM_Design)).
-- Tile integration, power grid and layout fixes for Tiny Tapeout: Rudr Bisht.
+- Tile integration, power grid, layout fixes, dummy-cell fix and PVT verification for Tiny Tapeout: Rudr Bisht.
+- Reproducible CI build, macro .lib characterization and timing sign-off: Aaryan Sharma.
