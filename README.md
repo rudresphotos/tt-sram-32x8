@@ -86,6 +86,13 @@ This is a joint project.
   - sign-off STA with OpenSTA on the real macro timing (not black-boxed): timing met at all 9 corners, worst setup
     slack +6.9 ns (see `docs/timing_signoff.md`).
 
+## Guidance
+
+This project was done at the Department of Electrical and Electronics Engineering, BITS Pilani, Pilani Campus,
+under the guidance of **[Dr. Govind Prasad](https://www.bits-pilani.ac.in/?p=3069061)**. His research covers analog
+and digital VLSI design, radiation-hardened memory circuits (SRAM, DRAM and MRAM) for space, in-memory computing,
+and IC tape-out and silicon testing.
+
 ## Credits
 
 - SRAM generated with [OpenRAM](https://github.com/VLSIDA/OpenRAM) (BSD-3-Clause), SKY130 cells from the
